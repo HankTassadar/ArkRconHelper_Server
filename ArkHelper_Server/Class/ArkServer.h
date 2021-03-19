@@ -9,9 +9,7 @@
 #include"Log.h"
 #pragma comment(lib,"ws2_32.lib")
 
-//#define RELEASE
-//#define DEBUG
-#ifdef DEBUG
+#ifdef _DEBUG
 #define LOG(str) std::cout << str  << std::endl;
 #else
 #define LOG(str)

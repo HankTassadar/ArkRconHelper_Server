@@ -60,7 +60,7 @@ int ArkHelperServerAPP::run(bool *exit)
 
 bool ArkHelperServerAPP::init()
 {
-	this->_rcon.init();
+	if (!this->_rcon.init())return false;
 	this->_rconConfig->openFile("Config.json");
 	auto root = this->_rconConfig->getRoot();
 	struct server{

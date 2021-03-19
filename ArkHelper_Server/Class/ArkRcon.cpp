@@ -20,8 +20,9 @@ bool ArkRcon::init()
 	if (WSAStartup(sockVersion, &data) != 0)
 	{
 		LOG("WSA init Error");
-		exit(0);
+		return false;
 	}
+	return true;
 }
 
 void ArkRcon::update()

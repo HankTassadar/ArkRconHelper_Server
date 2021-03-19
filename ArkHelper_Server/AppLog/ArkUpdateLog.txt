@@ -1,0 +1,30 @@
+2021/2/19-17:39:8--324.22--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!
+2021/2/19-17:40:20--324.22--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!
+2021/2/19-17:45:29--324.22--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!

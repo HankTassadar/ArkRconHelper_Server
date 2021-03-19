@@ -146,11 +146,11 @@ void ArkServer::updatePlayerList()
 			LOG("Player Joined!" + p.first->steamId);
 		}
 	}
-#ifdef RELEASE
+#ifndef _DEBUG
 	if (this->_player.size() > lastPnum) {
 		this->saveworld();
 	}
-#endif // RELEASE
+#endif // _DEBUG
 	this->_player = player;
 }
 
