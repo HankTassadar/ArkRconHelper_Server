@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Class">
+      <UniqueIdentifier>{2fdc6576-db45-4e4f-80cc-305abbb15702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{682981f6-3441-4d31-8d4c-2e92a115dbb8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ArkHelper_Server.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Log.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Sqlite3Operate.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\TimeClass.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\CurlOperate.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\JsonOperate.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\app.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\ArkRcon.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\ArkServer.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\ArkUpdate.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Class\Log.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Sqlite3Operate.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\TimeClass.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\CurlOperate.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\JsonOperate.h">
+      <Filter>Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\app.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\ArkRcon.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\ArkServer.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\ArkUpdate.h">
+      <Filter>App</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Config.json" />
+  </ItemGroup>
+</Project>
