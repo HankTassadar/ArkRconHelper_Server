@@ -15,8 +15,8 @@ public:
 	static size_t recive_data_fun(void* ptr, size_t size, size_t nmemb, void* stream) {
 		if (size * nmemb == 0)return nmemb;
 		size_t strSize = size * nmemb + 1;
-		char* str = (char*)malloc(strSize);
-		char* tempStr = (char*)malloc(strSize);
+		char* str = new char[strSize]; 
+		char* tempStr = new char[strSize];
 		memset(str, 0, strSize);
 		memcpy(str, ptr, size * nmemb);
 
@@ -40,8 +40,8 @@ public:
 		memcpy(tempStr, head, length);
 		(*(std::stringstream*)stream) << tempStr;
 		//ÊÍ·Å¿Õ¼ä
-		free(tempStr);
-		free(str);
+		delete[](tempStr);
+		delete[](str);
 		return nmemb;
 	}
 

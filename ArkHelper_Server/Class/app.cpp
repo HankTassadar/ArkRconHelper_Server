@@ -66,7 +66,7 @@ bool ArkHelperServerAPP::init()
 	struct server{
 		string name;
 		string ip;
-		u_short port;
+		u_short port = 0;
 		string pass;
 	};
 	vector<server> servers;

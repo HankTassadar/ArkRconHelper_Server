@@ -4,6 +4,8 @@ using namespace std;
 
 ArkServer::ArkServer()
 	:_id(0)
+	, _connected(false)
+	,_client(0)
 {
 }
 

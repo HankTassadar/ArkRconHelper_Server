@@ -28,7 +28,7 @@
 struct Rcon_addr {
 	std::string serverName;
 	std::string	ip;
-	u_short port;
+	u_short port = 0;
 	std::string password;
 };
 
