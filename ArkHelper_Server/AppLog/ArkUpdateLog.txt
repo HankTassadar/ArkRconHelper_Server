@@ -18,3 +18,43 @@ E:/pveark_scorched_earth/version.txt--open failed!
 E:/pveark_the_center/version.txt--open failed!
 E:/pveark_the_island/version.txt--open failed!
 E:/pveark_valguero/version.txt--open failed!
+2021/2/20-14:2:44--324.24--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!
+2021/2/20-14:12:2--324.24--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!
+2021/2/20-14:25:19--324.24--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!
+2021/2/20-14:46:11--324.24--版本号更新
+E:/pveark_aberration/version.txt--open failed!
+E:/pveark_crystal_isles/version.txt--open failed!
+E:/pveark_extinction/version.txt--open failed!
+E:/pveark_genesis/version.txt--open failed!
+E:/pveark_ragnarok/version.txt--open failed!
+E:/pveark_scorched_earth/version.txt--open failed!
+E:/pveark_the_center/version.txt--open failed!
+E:/pveark_the_island/version.txt--open failed!
+E:/pveark_valguero/version.txt--open failed!

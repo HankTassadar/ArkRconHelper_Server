@@ -25,11 +25,17 @@ bool ArkRcon::init()
 	return true;
 }
 
-void ArkRcon::update()
+void ArkRcon::updateplayerlist()
+{
+	for (auto& i : this->_server) {
+		i->updatePlayerList();
+	}
+}
+
+void ArkRcon::clearRecv()
 {
 	for (auto& i : this->_server) {
 		i->clearRecv();
-		i->updatePlayerList();
 	}
 }
 

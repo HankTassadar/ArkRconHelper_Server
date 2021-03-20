@@ -140,5 +140,6 @@ private:
 	std::set<Player> _player;
 	SOCKET _client;
 	bool _connected;	//ÔÚÏß×´Ì¬
-	unsigned int _id;	//ÃüÁîĞòºÅid
+	unsigned int _id;	//cmd id
+	time_t _lastRecvTime;	//last time recv a packet
 };

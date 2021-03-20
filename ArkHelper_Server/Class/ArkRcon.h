@@ -20,22 +20,27 @@ public:
 	bool init();
 
 	/**
-	*接收所有socket缓冲区中的数据，并更新在线玩家列表
+	*update online players list
 	*/
-	void update();
+	void updateplayerlist();
 
 	/**
-	*向所有服务器发送公告
+	*clear all socket recv(using for keep alive pack)
+	*/
+	void clearRecv();
+
+	/**
+	*send a broadcast to all servers
 	*/
 	void broadcast(std::string&);
 
 	/**
-	*得到所有在线玩家的游戏内的角色名字
+	*get all online player's game character name
 	*/
 	void updateGameName();
 
 	/**
-	*向所有服务器发送一条命令
+	*sene a cmd to all servers and wait for recv 
 	*/
 	void sendCmdAndWiatForItRecv(const std::string&);
 public:

@@ -14,6 +14,7 @@ ArkHelperServerAPP* ArkHelperServerAPP::create()
 
 ArkHelperServerAPP::~ArkHelperServerAPP()
 {
+	//wait for input thread exit 
 	while (true) {
 		this->_exitMutex.lock();
 		auto flag = this->_inputExit;
@@ -51,9 +52,8 @@ int ArkHelperServerAPP::run(bool *exit)
 		//更新退出信号
 		this->_exitMutex.lock();
 		exit_flag = *(this->_exitFlag);
-		input_exit = this->_inputExit;
 		this->_exitMutex.unlock();
-	} while (!exit_flag&&!input_exit);
+	} while (!exit_flag);
 
 	return 0;
 }
@@ -135,19 +135,21 @@ void ArkHelperServerAPP::mainWork()
 {
 	
 	this->solveInput();
+	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
+		this->_rcon.clearRecv();
+	}
 	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
 		
 	}
 	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
-		this->_rcon.update();
+		this->_rcon.updateplayerlist();
 	}
-	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
 
-	}
 	if (this->_count % (50 * 60 * 1) == 0) {	//每分钟执行一次
 		
 	}
 	this->_count++;
+	if (this->_count % (3600 * 50) == 0)this->_count = 0;
 	Sleep(20);
 }
 
@@ -165,15 +167,16 @@ void ArkHelperServerAPP::solveInput()
 	else if (cmd == "help") {
 		cmdResult += "showonline--this cmd show you all online players\n"
 			"broadcast--send a broadcast mseeage to all servers\n"
-			"exit--ues to exit this progrma\n"
 			"version--show the newest version of ARK Server\n"
 			"ban--ban player\n"
-			"unban--unban player\n";
+			"unban--unban player\n"
+			"exit--ues to exit this progrma\n";
 	}
 	else if (cmd == "exit") {
 		this->_exitMutex.lock();
 		*(this->_exitFlag) = true;
 		this->_exitMutex.unlock();
+		cmdResult += "EXIT!";
 	}
 	else if (cmd == "showonline") {
 		COUT("Whether you would like to know player's game character name? y/n");

@@ -96,6 +96,7 @@ ArkServer::packet ArkServer::recvData()
 	string data(buffer + 8, buffer + size);
 	delete[] buffer;
 	LOG(data);
+	time(&(this->_lastRecvTime));
 	return packet{id,type,data};
 }
 
