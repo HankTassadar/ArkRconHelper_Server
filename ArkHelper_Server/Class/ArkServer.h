@@ -88,7 +88,15 @@ public:
 	*/
 	void broadcast(std::string&);
 
+	/**
+	*server save
+	*/
 	bool saveworld();
+
+	/**
+	*send a cmd and wiat for recive it's back
+	*/
+	packet sendCmdAndWiatForRecv(const std::string&);
 
 	std::string getServerName() {
 		return this->_rconAddr.serverName;

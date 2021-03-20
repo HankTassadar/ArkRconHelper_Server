@@ -45,6 +45,13 @@ void ArkRcon::updateGameName()
 		i->updateGameName();
 }
 
+void ArkRcon::sendCmdAndWiatForItRecv(const std::string& data)
+{
+	for (auto& i : this->_server) {
+		i->sendCmdAndWiatForRecv(data);
+	}
+}
+
 bool ArkRcon::addServer(Rcon_addr addr)
 {
 	auto server = new ArkServer();

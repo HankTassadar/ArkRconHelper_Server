@@ -34,6 +34,10 @@ public:
 	*/
 	void updateGameName();
 
+	/**
+	*向所有服务器发送一条命令
+	*/
+	void sendCmdAndWiatForItRecv(const std::string&);
 public:
 	std::vector<ArkServer*> _server;
 };

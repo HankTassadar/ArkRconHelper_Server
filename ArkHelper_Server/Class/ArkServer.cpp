@@ -95,6 +95,7 @@ ArkServer::packet ArkServer::recvData()
 	int type = this->byte32ToInt(buffer + 4);
 	string data(buffer + 8, buffer + size);
 	delete[] buffer;
+	LOG(data);
 	return packet{id,type,data};
 }
 
@@ -138,7 +139,11 @@ void ArkServer::updatePlayerList()
 	auto Pnum = player.size();
 	if (lastPnum == 0 && Pnum == 0) return;
 	if (lastPnum == 0 && Pnum != 0) {	//第一个进服的玩家或者程序第一次启动时
+#ifndef _DEBUG
 		this->saveworld();
+#endif // !_DEBUG
+
+
 		this->_player = player;	
 		return;
 	}
@@ -184,6 +189,12 @@ bool ArkServer::saveworld()
 	auto re = this->waitForRecvData();
 	LOG(re.data);
 	return true;
+}
+
+ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
+{
+	this->sendData(data, SERVERDATA_EXECCOMMAND);
+	return this->waitForRecvData();
 }
 
 ArkServer::packet ArkServer::waitForRecvData()

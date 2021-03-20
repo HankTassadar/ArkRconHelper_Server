@@ -167,7 +167,8 @@ void ArkHelperServerAPP::solveInput()
 			"broadcast--send a broadcast mseeage to all servers\n"
 			"exit--ues to exit this progrma\n"
 			"version--show the newest version of ARK Server\n"
-			"";
+			"ban--ban player\n"
+			"unban--unban player\n";
 	}
 	else if (cmd == "exit") {
 		this->_exitMutex.lock();
@@ -218,6 +219,20 @@ void ArkHelperServerAPP::solveInput()
 	else if (cmd == "version") {
 		this->_update.updateVersionFromUrl();
 		cmdResult = this->_update.getVersion();
+	}
+	else if (cmd == "ban") {
+		COUT("Input the steamid of who you want to ban:");
+		string steamid;
+		CIN(steamid);
+		this->_rcon.sendCmdAndWiatForItRecv("banplayer " + steamid);
+		cmdResult = "OK!";
+	}
+	else if (cmd == "unban") {
+		COUT("Input the steamid of who you want to unban:");
+		string steamid;
+		CIN(steamid);
+		this->_rcon.sendCmdAndWiatForItRecv("unbanplayer " + steamid);
+		cmdResult = "OK!";
 	}
 	else {
 		cmdResult = "error CMD! Input \"help\" for more CMD";
