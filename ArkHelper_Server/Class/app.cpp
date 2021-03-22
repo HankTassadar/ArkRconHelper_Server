@@ -19,7 +19,7 @@ ArkHelperServerAPP::~ArkHelperServerAPP()
 		this->_exitMutex.lock();
 		auto flag = this->_inputExit;
 		this->_exitMutex.unlock();
-		if (!flag)break;
+		if (flag)break;
 		Sleep(10);
 	}
 	this->impl = nullptr;

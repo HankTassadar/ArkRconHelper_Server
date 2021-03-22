@@ -3,9 +3,10 @@
 using namespace std;
 
 ArkServer::ArkServer()
-	:_id(0)
+	:_id(1)
 	, _connected(false)
 	,_client(0)
+	,_lastRecvTime(time(nullptr))
 {
 }
 
@@ -17,35 +18,45 @@ ArkServer::~ArkServer()
 bool ArkServer::init(Rcon_addr addr)
 {
 	this->_rconAddr = addr;
+	return this->init();
+}
+
+bool ArkServer::init()
+{
 	this->_connected = false;
 	this->_client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->_client == INVALID_SOCKET) {
-		LOG("create socket error!" +WSAGetLastError())
+		LOG("create socket error!" + WSAGetLastError())
 			return false;
 	}
 	sockaddr_in serAddr;
 	serAddr.sin_family = AF_INET;
-	serAddr.sin_port = htons(addr.port);
-	inet_pton(AF_INET, addr.ip.c_str(), &(serAddr.sin_addr));
+	serAddr.sin_port = htons(this->_rconAddr.port);
+	inet_pton(AF_INET, this->_rconAddr.ip.c_str(), &(serAddr.sin_addr));
 
 	u_long argp = 1;
 	ioctlsocket(this->_client, FIONBIO, &argp);//非阻塞
 
-	if (connect(this->_client, (sockaddr*)(&serAddr), sizeof(serAddr)) ==SOCKET_ERROR) {
+	if (connect(this->_client, (sockaddr*)(&serAddr), sizeof(serAddr)) == SOCKET_ERROR) {
 		if (WSAGetLastError() != WSAEWOULDBLOCK) {
 			LOG(WSAGetLastError());
 			return false;
 		}
 	}
 	struct timeval timeout;	//五秒内没有连接上直接返回超时
-	timeout.tv_sec = 5;
+	timeout.tv_sec = 3;
 	timeout.tv_usec = 0;
 
 	fd_set rfd;
 	FD_ZERO(&rfd);
 	FD_SET(this->_client, &rfd);
 	auto ret = select(0, 0, &rfd, 0, &timeout);
-	if (ret <= 0)return false;
+	if (ret <= 0) {
+		this->_connected = false;
+		return false;
+	}
+
+	this->_connected = true;
 	return this->auth();
 }
 
@@ -62,13 +73,17 @@ bool ArkServer::sendData(const std::string data, const int type)
 	int packet_len = data.length() + RCON_HEADER_SIZE;
 	unsigned char *packet=new unsigned char[packet_len];
 	this->pack(packet, data, packet_len,this->_id++ , type);
-	if (send(this->_client, (const char*)packet, packet_len, 0) < 0) {
-		LOG("send error! ArkServer.cpp-53-error:" + WSAGetLastError());
-		delete[] packet;
-		return false;
+	if (this->_connected) {
+		if (send(this->_client, (const char*)packet, packet_len, 0) < 0) {
+			LOG("send error! ArkServer.cpp-53-error:" + WSAGetLastError());
+		}
+		else {
+			delete[] packet;
+			return true;
+		}
 	}
 	delete[] packet;
-	return true;
+	return false;
 }
 
 void ArkServer::clearRecv()
@@ -205,6 +220,10 @@ ArkServer::packet ArkServer::waitForRecvData()
 	while (re.id != ID) {
 		Sleep(20);
 		re = this->recvData();
+		if (!this->_connected) {
+			LOG(this->getServerName() + "--lost connection!");
+			break;
+		}
 	}
 	return re;
 }
@@ -214,6 +233,7 @@ bool ArkServer::waitForAuth()
 	clock_t start, ends;
 	start = clock();
 	while (true) {
+		Sleep(10);
 		auto p = this->recvData();
 		if (p.type == SERVERDATA_AUTH_RESPONSE) {
 			if (p.id == -1)
@@ -256,17 +276,51 @@ bool ArkServer::readPacket(unsigned char** buffer, size_t& size)
 	return true;
 }
 
-size_t ArkServer::readPacketLen() const
+size_t ArkServer::readPacketLen()
 {
+	/*
 	unsigned char* buffer = new unsigned char[4]{ 0 };
-	auto i=recv(this->_client, (char*)buffer, 4, 0);
+	auto i = recv(this->_client, (char*)buffer, 4, 0);
 	if (i == -1) {
 		delete[]buffer;
 		return 0;
 	}
+	if (i == 0) {
+		delete[]buffer;
+		this->_connected = false;
+		LOG("Lost connection!");
+		return 0;
+	}
 	const size_t len = byte32ToInt(buffer);
+	LOG(len);
 	delete[] buffer;
 	return len;
+	*/
+
+	unsigned char* buffer = new unsigned char[4]{ 0 };
+
+	timeval timeout{ 0,500 };
+	fd_set rfd;
+	FD_ZERO(&rfd);
+	FD_SET(this->_client, &rfd);
+	int i=-1;
+	auto ret = select(0, &rfd, 0, 0, &timeout);
+	if (ret == 1) {
+		if (FD_ISSET(this->_client, &rfd)) {
+			i = recv(this->_client, (char*)buffer, 4, 0);
+			if (i == 0 || i==-1) {
+				this->_connected = false;
+			}
+		}
+	}
+	size_t len = 0;
+	if (this->_connected && i == 4) {
+		len = byte32ToInt(buffer);
+		LOG(len);
+	}
+	delete[] buffer;
+	return len;
+	
 }
 
 size_t ArkServer::byte32ToInt(unsigned char* buffer) const

@@ -59,6 +59,8 @@ public:
 public:
 	bool init(Rcon_addr addr);
 
+	bool init();
+
 	bool auth();
 
 	bool sendData(const std::string data, const int type);
@@ -105,6 +107,10 @@ public:
 	std::set<Player>& getPlayers() {
 		return this->_player;
 	}
+
+	bool getConnectedState() {
+		return this->_connected;
+	}
 private:
 	/**
 	*等待接收一个特定ID的包
@@ -129,7 +135,7 @@ private:
 	/**
 	*读取包长
 	*/
-	size_t readPacketLen() const;
+	size_t readPacketLen();
 
 	/**
 	*字节流转int

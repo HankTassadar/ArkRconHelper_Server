@@ -63,12 +63,12 @@ bool ArkRcon::addServer(Rcon_addr addr)
 	auto server = new ArkServer();
 	auto flag = server->init(addr);
 	if (flag) {
-		LOG(server->getServerName() + "连接成功");
+		LOG(server->getServerName() + " connect succeed!");
 		server->updatePlayerList();
 		this->_server.push_back(server);
 		return true;
 	}
-	LOG(server->getServerName() + "连接失败");
+	LOG(server->getServerName() + " connect faild!");
 	delete(server);
 	return false;
 }
