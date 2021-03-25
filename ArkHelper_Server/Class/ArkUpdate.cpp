@@ -37,6 +37,25 @@ void ArkUpdate::init()
 	this->arkCheckWindows();
 }
 
+bool ArkUpdate::checkCrashed()
+{
+	auto hwnd = FindWindowA(NULL, "The UE4-ShooterGame Game has crashed and will close");
+	if (!hwnd)return false;
+	EnumChildWindows(hwnd, [](HWND Hwnd, LPARAM)->int {
+		char* str = new char[50] {0};
+		GetClassNameA(Hwnd, str, 50);
+		if (string(str) == "Button") {
+			SendMessageA(Hwnd, WM_LBUTTONDOWN, 0, 0);
+			Sleep(50);
+			SendMessageA(Hwnd, WM_LBUTTONUP, 0, 0);
+		}
+		delete[] str;
+		return 0;
+		}, NULL);
+	this->_updateLog->logoutUTF8(TimeClass().TimeNow() + "--crashed");
+	return true;
+}
+
 void ArkUpdate::arkUpdate()
 {
 	for (auto &i : this->_arkServerWindow) {

@@ -109,6 +109,11 @@ public:
 	}
 
 	bool getConnectedState() {
+		if (!this->_connected) {
+			closesocket(this->_client);
+			this->_player.clear();
+			this->_id = 1;
+		}
 		return this->_connected;
 	}
 private:
@@ -142,10 +147,9 @@ private:
 	*/
 	size_t byte32ToInt(unsigned char* buffer) const;
 private:
-	Rcon_addr _rconAddr;
-	std::set<Player> _player;
-	SOCKET _client;
-	bool _connected;	//ÔÚÏß×´Ì¬
+	Rcon_addr _rconAddr;	
+	std::set<Player> _player;	//players set
+	SOCKET _client;		//socket
+	bool _connected;	//online state
 	unsigned int _id;	//cmd id
-	time_t _lastRecvTime;	//last time recv a packet
 };

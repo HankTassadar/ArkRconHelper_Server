@@ -6,7 +6,6 @@ ArkServer::ArkServer()
 	:_id(1)
 	, _connected(false)
 	,_client(0)
-	,_lastRecvTime(time(nullptr))
 {
 }
 
@@ -111,7 +110,6 @@ ArkServer::packet ArkServer::recvData()
 	string data(buffer + 8, buffer + size);
 	delete[] buffer;
 	LOG(data);
-	time(&(this->_lastRecvTime));
 	return packet{id,type,data};
 }
 

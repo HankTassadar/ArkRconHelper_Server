@@ -39,6 +39,10 @@ public:
 	static BOOL CALLBACK EnumWindowsCallBack(HWND hwnd, LPARAM lParam);
 
 	/**
+	*查看是否有crashed窗口 
+	*/
+	bool checkCrashed();
+	/**
 	*update all servers if the server is needed
 	*/
 	void arkUpdate();

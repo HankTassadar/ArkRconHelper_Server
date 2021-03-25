@@ -137,6 +137,7 @@ void ArkHelperServerAPP::mainWork()
 	this->solveInput();
 	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
 		this->_rcon.clearRecv();
+		this->_update.checkCrashed();
 	}
 	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
 		
