@@ -58,6 +58,22 @@ void ArkRcon::sendCmdAndWiatForItRecv(const std::string& data)
 	}
 }
 
+void ArkRcon::shutConnect()
+{
+	for (auto& i : this->_server) {
+		i->shutConnect();
+	}
+}
+
+void ArkRcon::reconnect()
+{
+	for (auto& i : this->_server) {
+		if (!i->getConnectedState()) {
+			i->init();
+		}
+	}
+}
+
 bool ArkRcon::addServer(Rcon_addr addr)
 {
 	auto server = new ArkServer();

@@ -116,6 +116,12 @@ public:
 		}
 		return this->_connected;
 	}
+
+	/**
+	* shutdown connection
+	* 关闭链接
+	*/
+	void shutConnect();
 private:
 	/**
 	*等待接收一个特定ID的包

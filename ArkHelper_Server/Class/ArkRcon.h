@@ -43,6 +43,10 @@ public:
 	*sene a cmd to all servers and wait for recv 
 	*/
 	void sendCmdAndWiatForItRecv(const std::string&);
+
+	void shutConnect();
+
+	void reconnect();
 public:
 	std::vector<ArkServer*> _server;
 };

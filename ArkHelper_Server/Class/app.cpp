@@ -70,13 +70,13 @@ bool ArkHelperServerAPP::init()
 		string pass;
 	};
 	vector<server> servers;
-	auto namelist = root["Server"].getMemberNames();
-	for (auto &i : namelist) {
+	auto allservers = root["Servers"];
+	for (auto &i : allservers) {
 		server s;
-		s.name = i;
+		s.name = i["name"].asString();
 		s.ip = root["IP"].asString();
-		s.port = root["Server"][i]["Port"].asInt();
-		s.pass= root["Server"][i]["Pass"].asString();
+		s.port = i["RconPort"].asInt();
+		s.pass= i["AdminPass"].asString();
 		servers.push_back(s);
 	}
 	for (auto &i : servers) {
@@ -145,9 +145,11 @@ void ArkHelperServerAPP::mainWork()
 	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
 		this->_rcon.updateplayerlist();
 	}
-
 	if (this->_count % (50 * 60 * 1) == 0) {	//每分钟执行一次
 		
+	}
+	if (this->_count % (50 * 60 * 10) == 0) {	//每10分钟执行一次
+		this->_update.checkUpdate();
 	}
 	this->_count++;
 	if (this->_count % (3600 * 50) == 0)this->_count = 0;
@@ -171,6 +173,8 @@ void ArkHelperServerAPP::solveInput()
 			"version--show the newest version of ARK Server\n"
 			"ban--ban player\n"
 			"unban--unban player\n"
+			"shutdown--shutdown all server which is in Config.json\n"
+			"update--update all server"
 			"exit--ues to exit this progrma\n";
 	}
 	else if (cmd == "exit") {
@@ -221,7 +225,6 @@ void ArkHelperServerAPP::solveInput()
 		cmdResult = "Send OK!";
 	}
 	else if (cmd == "version") {
-		this->_update.updateVersionFromUrl();
 		cmdResult = this->_update.getVersion();
 	}
 	else if (cmd == "ban") {
@@ -237,6 +240,19 @@ void ArkHelperServerAPP::solveInput()
 		CIN(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("unbanplayer " + steamid);
 		cmdResult = "OK!";
+	}
+	else if (cmd == "shutdown") {
+		this->_update.closeAll();
+		cmdResult += "OK!";
+	}
+	else if (cmd == "update") {
+		this->_rcon.shutConnect();
+		COUT(TimeClass().TimeNow() + "--Rcon connections have beed all shutdown!");
+		this->_update.arkUpdate();
+		COUT(TimeClass().TimeNow() + "--Update Finished!");
+		this->_rcon.reconnect();
+		COUT(TimeClass().TimeNow() + "--Rcon reconnect!");
+		cmdResult += "OK!";
 	}
 	else {
 		cmdResult = "error CMD! Input \"help\" for more CMD";

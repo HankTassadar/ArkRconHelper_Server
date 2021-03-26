@@ -211,6 +211,12 @@ ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 	return this->waitForRecvData();
 }
 
+void ArkServer::shutConnect()
+{
+	closesocket(this->_client);
+	this->_connected = false;
+}
+
 ArkServer::packet ArkServer::waitForRecvData()
 {
 	int ID = this->_id - 1;

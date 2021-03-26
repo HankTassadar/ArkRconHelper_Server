@@ -23,52 +23,42 @@ private:
 		std::string listenPort;	
 		std::string queryPort;
 		std::string rconPort;
-		bool isonline;	//服务器是否在线
 	};
 
 public:
 	/**
-	*check if server need to update
+	*check if any server need to update
 	*return true if server need update
 	*/
-	bool needForUpdate();
+	bool checkUpdate();
 
 	/**
-	*枚举窗口找到所有服务器窗口后得到其窗口句柄
-	*/
-	static BOOL CALLBACK EnumWindowsCallBack(HWND hwnd, LPARAM lParam);
-
-	/**
-	*查看是否有crashed窗口 
+	* check for if any server crashed with UE4，if there is a server crashed, auto close it
+	* 查看是否有crashed窗口,如果有，则关闭该窗口使其自动重启 
 	*/
 	bool checkCrashed();
+
 	/**
-	*update all servers if the server is needed
+	* update all servers if the server is needed
+	* 更新所有服务器
 	*/
 	void arkUpdate();
 
 	/**
-	*通过窗口句柄关闭方舟服务器窗口
+	* close all ark window ;
+	* 关闭所有方舟窗口
 	*/
-	bool closeArkWindow(HWND);
+	void closeAll();
 
 	/**
-	*重启方舟,参数为服务器安装路径
+	* restart all ark server
+	* 重启方舟,参数为服务器安装路径
 	*/
 	void arkRestart();
 
 	/**
-	*根据配置文件检查所有窗口
-	*/
-	void arkCheckWindows();
-
-	/**
-	*从网络更新方舟最新版本号
-	*/
-	void updateVersionFromUrl();
-
-	/**
-	*返回当前的网络版本号
+	* get version number
+	* 返回当前的网络版本号
 	*/
 	std::string getVersion() {
 		return this->_netVersion;
@@ -76,9 +66,28 @@ public:
 
 private:
 	/**
-	*read ark server version from installpath/version.txt
+	* update the newest ark server version number from http://arkdedicated.com/version 
+	* 从网络更新方舟最新版本号
+	*/
+	void updateVersionFromUrl();
+
+	/**
+	* read ark server version from installpath/version.txt
+	* 读取方舟服务器的版本号，参数为config中的path(服务器安装路径)
 	*/
 	std::string readVersion(const std::string &installpath);
+
+	/**
+	* use handle to close an ark server window
+	* 通过窗口句柄关闭方舟窗口，在窗口彻底关闭前阻塞
+	*/
+	bool closeArkWindow(HWND);
+
+	/**
+	* check ang update all ark server window hwnd
+	* 根据配置文件检查所有窗口
+	*/
+	void arkCheckWindows();
 
 private:
 	//更新日志
