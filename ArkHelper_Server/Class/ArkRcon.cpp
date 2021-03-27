@@ -69,17 +69,19 @@ void ArkRcon::reconnect()
 
 bool ArkRcon::addServer(Rcon_addr addr)
 {
+	bool re = false;
 	auto server = new ArkServer();
 	auto flag = server->init(addr);
 	if (flag) {
 		LOG(server->getServerName() + " connect succeed!");
 		server->updatePlayerList();
+		re = true;
 	}
 	else {
 		LOG(server->getServerName() + " connect faild!");
 	}
 	this->_server.push_back(server);
-	return true;
+	return re;
 }
 
 

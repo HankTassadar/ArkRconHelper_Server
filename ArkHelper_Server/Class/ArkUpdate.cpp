@@ -158,6 +158,7 @@ void ArkUpdate::arkRestart()
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
 			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
 			system(startCmd.c_str());
+			Sleep(3000);
 		}
 	}
 }
