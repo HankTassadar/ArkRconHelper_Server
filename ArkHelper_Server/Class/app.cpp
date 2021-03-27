@@ -217,10 +217,7 @@ void ArkHelperServerAPP::solveInput()
 	else if (cmd == "broadcast") {
 		COUT("Input what you want to send: ");
 		string data = "";
-		string data1 = "这是一个测试公告";
-		string data2 = MyLog::GBKtoUTF8(data1);
-		CINUTF8(data);
-		string data4 = MyLog::GBKtoUTF8(data);
+ 		CINUTF8(data); 
 		this->_rcon.broadcast(data); 
 		cmdResult = "Send OK!";
 	}
@@ -250,8 +247,6 @@ void ArkHelperServerAPP::solveInput()
 		COUT(TimeClass().TimeNow() + "--Rcon connections have beed all shutdown!");
 		this->_update.arkUpdate();
 		COUT(TimeClass().TimeNow() + "--Update Finished!");
-		this->_rcon.reconnect();
-		COUT(TimeClass().TimeNow() + "--Rcon reconnect!");
 		cmdResult += "OK!";
 	}
 	else {

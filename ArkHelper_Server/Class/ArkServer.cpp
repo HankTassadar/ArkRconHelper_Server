@@ -11,7 +11,8 @@ ArkServer::ArkServer()
 
 ArkServer::~ArkServer()
 {
-	closesocket(this->_client);
+	if(this->_connected)
+		closesocket(this->_client);
 }
 
 bool ArkServer::init(Rcon_addr addr)
@@ -22,6 +23,7 @@ bool ArkServer::init(Rcon_addr addr)
 
 bool ArkServer::init()
 {
+	if (this->_connected)return;
 	this->_connected = false;
 	this->_client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->_client == INVALID_SOCKET) {
@@ -87,6 +89,7 @@ bool ArkServer::sendData(const std::string data, const int type)
 
 void ArkServer::clearRecv()
 {
+	if (!this->_connected)return;
 	while (true) {
 		auto i = this->recvData();
 		if (i.id == -1 && i.type == -1)break;
@@ -115,6 +118,7 @@ ArkServer::packet ArkServer::recvData()
 
 void ArkServer::updatePlayerList()
 {
+	if (!this->_connected)return;
 	this->sendData("listplayers", SERVERDATA_EXECCOMMAND);
 	auto re = this->waitForRecvData();
 	if (re.data.find("No Player") != string::npos) {
@@ -177,6 +181,7 @@ void ArkServer::updatePlayerList()
 
 void ArkServer::updateGameName()
 {
+	if (!this->_connected)return;
 	vector<Player> players;
 	for (auto &i : this->_player)
 		players.push_back(i);
@@ -193,6 +198,7 @@ void ArkServer::updateGameName()
 
 void ArkServer::broadcast(std::string &data)
 {
+	if (!this->_connected)return;
 	this->sendData("broadcast " + data, SERVERDATA_EXECCOMMAND);
 	auto i = this->waitForRecvData();
 }
@@ -207,12 +213,14 @@ bool ArkServer::saveworld()
 
 ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 {
+	if (!this->_connected)return;
 	this->sendData(data, SERVERDATA_EXECCOMMAND);
 	return this->waitForRecvData();
 }
 
 void ArkServer::shutConnect()
 {
+	if (!this->_connected)return;
 	closesocket(this->_client);
 	this->_connected = false;
 }
@@ -314,6 +322,9 @@ size_t ArkServer::readPacketLen()
 			i = recv(this->_client, (char*)buffer, 4, 0);
 			if (i == 0 || i==-1) {
 				this->_connected = false;
+				closesocket(this->_client);
+				this->_player.clear();
+				this->_id = 1;
 			}
 		}
 	}

@@ -108,12 +108,10 @@ public:
 		return this->_player;
 	}
 
-	bool getConnectedState() {
-		if (!this->_connected) {
-			closesocket(this->_client);
-			this->_player.clear();
-			this->_id = 1;
-		}
+	/**
+	* return true if is connecting
+	*/
+	bool connectedState() {
 		return this->_connected;
 	}
 

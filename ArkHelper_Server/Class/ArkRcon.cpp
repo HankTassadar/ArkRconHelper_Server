@@ -34,9 +34,8 @@ void ArkRcon::updateplayerlist()
 
 void ArkRcon::clearRecv()
 {
-	for (auto& i : this->_server) {
+	for (auto& i : this->_server)
 		i->clearRecv();
-	}
 }
 
 void ArkRcon::broadcast(std::string& data)
@@ -53,25 +52,20 @@ void ArkRcon::updateGameName()
 
 void ArkRcon::sendCmdAndWiatForItRecv(const std::string& data)
 {
-	for (auto& i : this->_server) {
+	for (auto& i : this->_server)
 		i->sendCmdAndWiatForRecv(data);
-	}
 }
 
 void ArkRcon::shutConnect()
 {
-	for (auto& i : this->_server) {
+	for (auto& i : this->_server)
 		i->shutConnect();
-	}
 }
 
 void ArkRcon::reconnect()
 {
-	for (auto& i : this->_server) {
-		if (!i->getConnectedState()) {
-			i->init();
-		}
-	}
+	for (auto& i : this->_server)
+		i->init();
 }
 
 bool ArkRcon::addServer(Rcon_addr addr)
@@ -81,12 +75,12 @@ bool ArkRcon::addServer(Rcon_addr addr)
 	if (flag) {
 		LOG(server->getServerName() + " connect succeed!");
 		server->updatePlayerList();
-		this->_server.push_back(server);
-		return true;
 	}
-	LOG(server->getServerName() + " connect faild!");
-	delete(server);
-	return false;
+	else {
+		LOG(server->getServerName() + " connect faild!");
+	}
+	this->_server.push_back(server);
+	return true;
 }
 
 
