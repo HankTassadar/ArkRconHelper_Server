@@ -152,7 +152,7 @@ void ArkUpdate::arkRestart()
 	this->arkCheckWindows();
 	auto root = this->_arkJson->getRoot();
 	for (auto &i : this->_arkServerWindow) {
-		if (i.hwnd == NULL) {
+		if (i.hwnd == NULL) {	//start any server which is not started
 			string startCmd = "start " + i.path + "/ShooterGame/Binaries/Win64/ShooterGameServer.exe" 
 				+ " " + i.map + "?listen?Port=" + i.listenPort + "?QueryPort=" + i.queryPort + "?RconPort=" + i.rconPort + "?" 
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();

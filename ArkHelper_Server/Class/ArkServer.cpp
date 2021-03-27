@@ -222,6 +222,8 @@ void ArkServer::shutConnect()
 {
 	if (!this->_connected)return;
 	closesocket(this->_client);
+	this->_id = 1;
+	this->_player.clear();
 	this->_connected = false;
 }
 

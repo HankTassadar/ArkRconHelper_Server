@@ -174,7 +174,8 @@ void ArkHelperServerAPP::solveInput()
 			"ban--ban player\n"
 			"unban--unban player\n"
 			"shutdown--shutdown all server which is in Config.json\n"
-			"update--update all server"
+			"restartall--restart all server(if not started,start server)\n"
+			"update--update all server\n"
 			"exit--ues to exit this progrma\n";
 	}
 	else if (cmd == "exit") {
@@ -240,6 +241,10 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "shutdown") {
 		this->_update.closeAll();
+		cmdResult += "OK!";
+	}
+	else if (cmd == "restartall") {
+		this->_update.arkRestart();
 		cmdResult += "OK!";
 	}
 	else if (cmd == "update") {
