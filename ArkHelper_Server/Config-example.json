@@ -1,149 +1,94 @@
-{
+ï»¿{
+  "IP": "192.168.1.7",
   "steamcmdPath": "E:/steamcmd/steamcmd.exe",
-  "startCmdAdd": "MaxPlayers=70?ServerAutoForceRespawnWildDinosInterval=86400?AllowCrateSpawnsOnTopOfStructures=True -AutoDestroyStructures -EnableIdlePlayerKick -clusterid=12345678 -ClusterDirOverride=\"E:\\steamcmd\" -NoTransferFromFiltering -UseBattlEye -servergamelog -usecache -nomemorybias -StasisKeepControllers -NoHangDetection -nosteamclient -game -server -log",
-  "arkserverInstallPath": {
-    "ark_aberration": {
+  "startCmdAdd": "MaxPlayers=70?ServerAutoForceRespawnWildDinosInterval=86400?AllowCrateSpawnsOnTopOfStructures=True -AutoDestroyStructures -EnableIdlePlayerKick -clusterid=891223834 -ClusterDirOverride=\"E:\\steamcmd\" -NoTransferFromFiltering -UseBattlEye -servergamelog -usecache -nomemorybias -StasisKeepControllers -NoHangDetection -nosteamclient -game -server -log",
+  "Servers": {
+    "pveark_aberration": {
+      "name": "PVEç•¸å˜",
       "path": "E:/pveark_aberration",
       "map": "Aberration_P",
       "Port": 16611,
       "QueryPort": 16612,
-      "RconPort": 16613
+      "RconPort": 16613,
+      "AdminPass": "123"
     },
-    "ark_crystal_isles": {
+    "pveark_crystal_isles": {
+      "name": "PVEæ°´æ™¶å²›",
       "path": "E:/pveark_crystal_isles",
       "map": "CrystalIsles",
       "Port": 16621,
       "QueryPort": 16622,
-      "RconPort": 16623
+      "RconPort": 16623,
+      "AdminPass": "123"
     },
-    "ark_extinction": {
+    "pveark_extinction": {
+      "name": "PVEç­ç»",
       "path": "E:/pveark_extinction",
       "map": "Extinction",
       "Port": 16631,
       "QueryPort": 16632,
-      "RconPort": 16633
+      "RconPort": 16633,
+      "AdminPass": "123"
     },
-    "ark_genesis": {
+    "pveark_genesis": {
+      "name": "PVEåˆ›ä¸–çºª",
       "path": "E:/pveark_genesis",
       "map": " Genesis",
       "Port": 16641,
       "QueryPort": 16642,
-      "RconPort": 16643
+      "RconPort": 16643,
+      "AdminPass": "123"
     },
-    "ark_ragnarok": {
+    "pveark_ragnarok": {
+      "name": "PVEä»™å¢ƒ",
       "path": "E:/pveark_ragnarok",
       "map": "Ragnarok",
       "Port": 16651,
       "QueryPort": 16652,
-      "RconPort": 16653
+      "RconPort": 16653,
+      "AdminPass": "123"
     },
-    "ark_scorched_earth": {
+    "pveark_scorched_earth": {
+      "name": "PVEç„¦åœŸ",
       "path": "E:/pveark_scorched_earth",
       "map": "ScorchedEarth_P",
       "Port": 16661,
       "QueryPort": 16662,
-      "RconPort": 16663
+      "RconPort": 16663,
+      "AdminPass": "123"
     },
-    "ark_the_center": {
+    "pveark_the_center": {
+      "name": "PVEä¸­å¿ƒå²›",
       "path": "E:/pveark_the_center",
       "map": "TheCenter",
       "Port": 16671,
       "QueryPort": 16672,
-      "RconPort": 16673
+      "RconPort": 16673,
+      "AdminPass": "123"
     },
-    "ark_the_island": {
+    "pveark_the_island": {
+      "name": "PVEå­¤å²›",
       "path": "E:/pveark_the_island",
       "map": "TheIsland",
       "Port": 16681,
       "QueryPort": 16682,
-      "RconPort": 16683
+      "RconPort": 16683,
+      "AdminPass": "123"
     },
-    "ark_valguero": {
+    "pveark_valguero": {
+      "name": "PVEç“¦å°”ç›–ç½—",
       "path": "E:/pveark_valguero",
       "map": "Valguero_P",
       "Port": 16691,
       "QueryPort": 16692,
-      "RconPort": 16693
+      "RconPort": 16693,
+      "AdminPass": "123"
     }
   },
-  "IP": "127.0.0.1",
-  "Server": {
-    "PVE»û±ä": {
-      "Port": 16613,
-      "Pass": "666666"
-    },
-    "PVEË®¾§µº": {
-      "Port": 16623,
-      "Pass": "666666"
-    },
-    "PVEÃğ¾ø": {
-      "Port": 16633,
-      "Pass": "666666"
-    },
-    "PVE´´ÊÀ¼Í": {
-      "Port": 16643,
-      "Pass": "666666"
-    },
-    "PVEÏÉ¾³": {
-      "Port": 16653,
-      "Pass": "666666"
-    },
-    "PVE½¹ÍÁ": {
-      "Port": 16663,
-      "Pass": "666666"
-    },
-    "PVEÖĞĞÄµº": {
-      "Port": 16673,
-      "Pass": "666666"
-    },
-    "PVE¹Âµº": {
-      "Port": 16683,
-      "Pass": "666666"
-    },
-    "PVEÍß¶û¸ÇÂŞ": {
-      "Port": 16693,
-      "Pass": "666666"
-    },
-    "PVP»û±ä": {
-      "Port": 13313,
-      "Pass": "666666"
-    },
-    "PVPË®¾§µº": {
-      "Port": 13323,
-      "Pass": "666666"
-    },
-    "PVPÃğ¾ø": {
-      "Port": 13333,
-      "Pass": "666666"
-    },
-    "PVP´´ÊÀ¼Í": {
-      "Port": 13343,
-      "Pass": "666666"
-    },
-    "PVPÏÉ¾³": {
-      "Port": 13353,
-      "Pass": "666666"
-    },
-    "PVP½¹ÍÁ": {
-      "Port": 13363,
-      "Pass": "666666"
-    },
-    "PVPÖĞĞÄµº": {
-      "Port": 13373,
-      "Pass": "666666"
-    },
-    "PVP¹Âµº": {
-      "Port": 13383,
-      "Pass": "666666"
-    },
-    "PVPÍß¶û¸ÇÂŞ": {
-      "Port": 13393,
-      "Pass": "666666"
-    }
-  },
+
   "Boardcast": {
     "boardcast1": {
-      "text": "ÕâÊÇÒ»¸ö²âÊÔ¹«¸æ",
+      "text": "è¿™æ˜¯ä¸€ä¸ªæµ‹è¯•å…¬å‘Š",
       "time": {
         "time1": "12:30",
         "time2": "13:30"
@@ -151,7 +96,7 @@
       "actived": true
     },
     "boardcast2": {
-      "text": "ÕâÊÇÒ»¸ö²âÊÔ¹«¸æ",
+      "text": "è¿™æ˜¯ä¸€ä¸ªæµ‹è¯•å…¬å‘Š",
       "time": {
         "time1": "23:30",
         "time2": ""
@@ -159,7 +104,7 @@
       "actived": true
     },
     "boardcast3": {
-      "text": "ÕâÊÇÒ»¸ö²âÊÔ¹«¸æ",
+      "text": "è¿™æ˜¯ä¸€ä¸ªæµ‹è¯•å…¬å‘Š",
       "time": {
         "time1": "",
         "time2": ""

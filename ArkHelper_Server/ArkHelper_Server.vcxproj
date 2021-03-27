@@ -72,18 +72,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Administrator\source\repos\ArkHelper_Server\lib\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Administrator\source\repos\ArkHelper_Server\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(SourcePath)</SourcePath>
+    <LibraryPath>..\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;$(IncludePath)</IncludePath>
+    <SourcePath>..\Class;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Users\Administrator\source\repos\ArkHelper_Server\lib\Release;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Administrator\source\repos\ArkHelper_Server\include;$(IncludePath)</IncludePath>
-    <SourcePath>C:\Users\Administrator\source\repos\ArkHelper_Server\Class;$(SourcePath)</SourcePath>
+    <LibraryPath>..\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\include;$(IncludePath)</IncludePath>
+    <SourcePath>..\Class;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
