@@ -140,7 +140,7 @@ void ArkHelperServerAPP::mainWork()
 		this->_update.checkCrashed();
 	}
 	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
-		
+		this->_rcon.reconnect();
 	}
 	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
 		this->_rcon.updateplayerlist();

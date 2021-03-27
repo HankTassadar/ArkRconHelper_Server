@@ -235,6 +235,7 @@ ArkServer::packet ArkServer::waitForRecvData()
 {
 	int ID = this->_id - 1;
 	auto re = this->recvData();
+	int count = 0;
 	while (re.id != ID) {
 		Sleep(20);
 		re = this->recvData();
@@ -242,6 +243,8 @@ ArkServer::packet ArkServer::waitForRecvData()
 			LOG(this->getServerName() + "--lost connection!");
 			break;
 		}
+		if (count == 50 * 5)break;	//5秒还没接收到该包视为失败，直接跳出
+		count++;
 	}
 	return re;
 }
