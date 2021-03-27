@@ -44,7 +44,7 @@ bool ArkServer::init()
 			return false;
 		}
 	}
-	struct timeval timeout;	//五秒内没有连接上直接返回超时
+	struct timeval timeout;	//三秒内没有连接上直接返回超时
 	timeout.tv_sec = 3;
 	timeout.tv_usec = 0;
 
@@ -215,7 +215,11 @@ ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 {
 	if (!this->_connected)return{ -1,-1,"" };
 	this->sendData(data, SERVERDATA_EXECCOMMAND);
-	return this->waitForRecvData();
+	auto re = this->waitForRecvData();
+#ifdef _DEBUG
+	std::cout << re.data;
+#endif // _DEBUG
+	return re;
 }
 
 void ArkServer::shutConnect()

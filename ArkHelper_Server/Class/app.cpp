@@ -176,6 +176,7 @@ void ArkHelperServerAPP::solveInput()
 			"shutdown--shutdown all server which is in Config.json\n"
 			"restartall--restart all server(if not started,start server)\n"
 			"update--update all server\n"
+			"shopreload--reload the shop config(don't use if you have no shop plugin)\n"
 			"exit--ues to exit this progrma\n";
 	}
 	else if (cmd == "exit") {
@@ -252,6 +253,10 @@ void ArkHelperServerAPP::solveInput()
 		COUT(TimeClass().TimeNow() + "--Rcon connections have beed all shutdown!");
 		this->_update.arkUpdate();
 		COUT(TimeClass().TimeNow() + "--Update Finished!");
+		cmdResult += "OK!";
+	}
+	else if (cmd == "shopreload") {
+		this->_rcon.sendCmdAndWiatForItRecv("arkshop.reload");
 		cmdResult += "OK!";
 	}
 	else {
