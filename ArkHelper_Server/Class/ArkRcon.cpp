@@ -4,7 +4,6 @@ using namespace std;
 
 ArkRcon::ArkRcon()
 {
-
 }
 
 ArkRcon::~ArkRcon()

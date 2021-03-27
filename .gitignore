@@ -4,3 +4,5 @@
 /ArkHelper_Server/Debug/
 /ArkHelper_Server/Release/
 /ArkHelper_Server/Config.json
+/ArkHelper_Server/AppLog/
+!/ArkHelper_Server/AppLog/log.txt

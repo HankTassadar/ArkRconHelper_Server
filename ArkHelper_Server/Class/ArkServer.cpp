@@ -23,7 +23,7 @@ bool ArkServer::init(Rcon_addr addr)
 
 bool ArkServer::init()
 {
-	if (this->_connected)return;
+	if (this->_connected)return true;
 	this->_connected = false;
 	this->_client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->_client == INVALID_SOCKET) {
@@ -213,7 +213,7 @@ bool ArkServer::saveworld()
 
 ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 {
-	if (!this->_connected)return;
+	if (!this->_connected)return{ -1,-1,"" };
 	this->sendData(data, SERVERDATA_EXECCOMMAND);
 	return this->waitForRecvData();
 }
