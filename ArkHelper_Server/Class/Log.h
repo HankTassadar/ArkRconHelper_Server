@@ -49,7 +49,13 @@ static std::string debuglogfilepos = "";
 	debuglogfilepos += "--";														\
 	debuglogfilepos += __FUNCTION__;												\
 	debuglog->logoutUTF8(TimeClass().TimeNow() + "--" + str + "--" + debuglogfilepos);
+
+
 #endif // _DEBUG
+
+#ifndef _DEBUG
+#define DEBUGLOG(str)
+#endif // !_DEBUG
 
 #define DEBUGLOGFIN DEBUGLOG("Function in")
 #define DEBUGLOGFRE DEBUGLOG("Function in")
