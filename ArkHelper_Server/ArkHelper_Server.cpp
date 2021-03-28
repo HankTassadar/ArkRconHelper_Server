@@ -33,7 +33,7 @@ int main()
 {
 	//system("mode con cp select=65001");//默认utf-8显示
 	//system("cls");
-
+	DEBUGLOG("Program Start");
 	SetConsoleCtrlHandler(CosonleHandler, TRUE);
 	g_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
@@ -51,6 +51,7 @@ int main()
 	//std::cout << CurlOperate::get("http://2021.ip138.com");
 	
 	SetEvent(g_hEvent);
+	DEBUGLOG("Program Exit");
 	return 1;
 }
 

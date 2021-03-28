@@ -26,61 +26,92 @@ bool ArkRcon::init()
 
 void ArkRcon::updateplayerlist()
 {
+	DEBUGLOG("Function in");
 	for (auto& i : this->_server) {
+		DEBUGLOG("Server name:" + i->getServerName());
 		i->updatePlayerList();
 	}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::clearRecv()
 {
-	for (auto& i : this->_server)
-		i->clearRecv();
+	DEBUGLOG("Function in");
+		for (auto& i : this->_server) {
+			DEBUGLOG("Server name:" + i->getServerName());
+			i->clearRecv();
+		}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::broadcast(std::string& data)
 {
-	for (auto& i : this->_server)
-		i->broadcast(data);
+	DEBUGLOG("Function in");
+		for (auto& i : this->_server) {
+			DEBUGLOG("Server name:" + i->getServerName());
+				i->broadcast(data);
+		}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::updateGameName()
 {
-	for (auto& i : this->_server)
+	DEBUGLOG("Function in");
+	for (auto& i : this->_server) {
+		DEBUGLOG("Server name:" + i->getServerName());
 		i->updateGameName();
+	}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::sendCmdAndWiatForItRecv(const std::string& data)
 {
-	for (auto& i : this->_server)
+	DEBUGLOG("Function in");
+	for (auto& i : this->_server) {
+		DEBUGLOG("Server name:" + i->getServerName());
 		i->sendCmdAndWiatForRecv(data);
+	}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::shutConnect()
 {
-	for (auto& i : this->_server)
+	DEBUGLOG("Function in");
+	for (auto& i : this->_server) {
+		DEBUGLOG("Server name:" + i->getServerName());
 		i->shutConnect();
+	}
+	DEBUGLOG("Function return");
 }
 
 void ArkRcon::reconnect()
 {
-	for (auto& i : this->_server)
+	DEBUGLOG("Function in");
+	for (auto& i : this->_server) {
+		DEBUGLOG("Server name:" + i->getServerName());
 		i->init();
+	}
+	DEBUGLOG("Function return");
 }
 
 bool ArkRcon::addServer(Rcon_addr addr)
 {
+	DEBUGLOG("Function in");
 	bool re = false;
 	auto server = new ArkServer();
 	auto flag = server->init(addr);
 	if (flag) {
+		DEBUGLOG(server->getServerName() + " connected succeed");
 		LOG(server->getServerName() + " connect succeed!");
 		server->updatePlayerList();
 		re = true;
 	}
 	else {
-		LOG(server->getServerName() + " connect faild!");
+		DEBUGLOG(server->getServerName()+" connected failed");
+		LOG(server->getServerName() + " connect failed!");
 	}
 	this->_server.push_back(server);
+	DEBUGLOG("Function return");
 	return re;
 }
 

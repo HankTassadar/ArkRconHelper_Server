@@ -8,7 +8,7 @@
 #include<memory>
 #include<iconv.h>
 #include<cstdlib>
-
+#include"TimeClass.h"
 #pragma comment(lib,"iconv.lib")
 
 namespace MyLog{
@@ -35,8 +35,21 @@ namespace MyLog{
 	private:
 		std::ofstream file;
 		std::mutex _myMutex;
-};
+	};
 
 }
 
+static MyLog::Log* debuglog = MyLog::Log::createLog("AppLog/DebugLog");
+static std::string debuglogfilepos = "";
+#ifdef _DEBUG
+#define DEBUGLOG(str)																\
+	debuglogfilepos=__FILE__;														\
+	debuglogfilepos+="--";															\
+	debuglogfilepos += std::to_string(__LINE__);									\
+	debuglogfilepos += "--";														\
+	debuglogfilepos += __FUNCTION__;												\
+	debuglog->logoutUTF8(TimeClass().TimeNow() + "--" + str + "--" + debuglogfilepos);
+#endif // _DEBUG
 
+#define DEBUGLOGFIN DEBUGLOG("Function in")
+#define DEBUGLOGFRE DEBUGLOG("Function in")

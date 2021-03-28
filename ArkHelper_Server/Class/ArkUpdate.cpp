@@ -38,8 +38,12 @@ void ArkUpdate::init()
 
 bool ArkUpdate::checkCrashed()
 {
+	DEBUGLOG("Function in");
 	auto hwnd = FindWindowA(NULL, "The UE4-ShooterGame Game has crashed and will close");
-	if (!hwnd)return false;
+	if (!hwnd) {
+		DEBUGLOG("Function return");
+		return false;
+	}
 	EnumChildWindows(hwnd, [](HWND Hwnd, LPARAM)->int {
 		char* str = new char[50] {0};
 		GetClassNameA(Hwnd, str, 50);
@@ -51,12 +55,15 @@ bool ArkUpdate::checkCrashed()
 		delete[] str;
 		return 0;
 		}, NULL);
+	DEBUGLOG("crashed!");
 	this->_updateLog->logoutUTF8(TimeClass().TimeNow() + "--crashed");
+	DEBUGLOG("Function return");
 	return true;
 }
 
 void ArkUpdate::arkUpdate()
 {
+	DEBUGLOG("Function in");
 	for (auto &i : this->_arkServerWindow) {
 		i.version = this->readVersion(i.path);
 		if (i.version != this->_netVersion) {
@@ -79,6 +86,7 @@ void ArkUpdate::arkUpdate()
 			}
 		}
 	}
+	DEBUGLOG("Function return");
 }
 
 void ArkUpdate::closeAll()
@@ -93,9 +101,11 @@ void ArkUpdate::closeAll()
 
 void ArkUpdate::updateVersionFromUrl()
 {
+	DEBUGLOGFIN;
 	auto version =CurlOperate::get("http://arkdedicated.com/version");
 	if (version.find(".", 0) != string::npos) {
 		if (this->_netVersion != version) {
+			DEBUGLOG("Version has been changed from " + this->_netVersion + " to " + version);
 			this->_netVersion = version;
 			this->_updateLog->logoutUTF8(TimeClass::TimeClass().TimeNow()+ "--" + version + "--" + "°æ±¾ºÅ¸üÐÂ");
 		}
@@ -103,6 +113,7 @@ void ArkUpdate::updateVersionFromUrl()
 #ifdef _DEBUG
 	std::cout << TimeClass::TimeClass().TimeNow() + "--" + version << endl;
 #endif // _DEBUG
+	DEBUGLOGFRE;
 }
 
 std::string ArkUpdate::readVersion(const std::string &installpath)
@@ -122,10 +133,15 @@ std::string ArkUpdate::readVersion(const std::string &installpath)
 
 bool ArkUpdate::checkUpdate()
 {
+	DEBUGLOGFIN;
 	this->updateVersionFromUrl();
 	for (auto &i : this->_arkServerWindow) {
-		if (i.version != this->_netVersion)return true;
+		if (i.version != this->_netVersion) {
+			DEBUGLOGFRE;
+			return true;
+		}
 	}
+	DEBUGLOGFRE;
 	return false;
 }
 

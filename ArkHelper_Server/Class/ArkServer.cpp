@@ -69,56 +69,72 @@ bool ArkServer::auth()
 
 bool ArkServer::sendData(const std::string data, const int type)
 {
-	//LOG("Sending: " + data);
-
+	DEBUGLOGFIN;
 	int packet_len = data.length() + RCON_HEADER_SIZE;
+	DEBUGLOG("send data length:" + to_string(packet_len));
 	unsigned char *packet=new unsigned char[packet_len];
 	this->pack(packet, data, packet_len,this->_id++ , type);
 	if (this->_connected) {
 		if (send(this->_client, (const char*)packet, packet_len, 0) < 0) {
+			DEBUGLOG("send error!" + to_string(WSAGetLastError()));
 			LOG("send error! ArkServer.cpp-53-error:" + WSAGetLastError());
 		}
 		else {
 			delete[] packet;
+			DEBUGLOGFRE;
 			return true;
 		}
 	}
 	delete[] packet;
+	DEBUGLOGFRE;
 	return false;
 }
 
 void ArkServer::clearRecv()
 {
+	DEBUGLOGFIN;
 	if (!this->_connected)return;
 	while (true) {
 		auto i = this->recvData();
 		if (i.id == -1 && i.type == -1)break;
 
 		if (i.id == 0 && i.type == 0) {	//keep alive包
-			break;
+			DEBUGLOG("recv a keepalive pack");
 		}
 		
 		//处理接收到的其他种类的包
 	}
+	DEBUGLOGFRE;
 }
 
 ArkServer::packet ArkServer::recvData()
 {
+	DEBUGLOGFIN;
 	unsigned char* buffer=nullptr;
 	size_t size=0;
 	auto ret = this->readPacket(&buffer, size);
-	if (!ret)return packet{ -1,-1,"" };
+	if (!ret) {
+		DEBUGLOGFRE;
+		return packet{ -1,-1,"" };
+	}
 	int id = this->byte32ToInt(buffer);
 	int type = this->byte32ToInt(buffer + 4);
 	string data(buffer + 8, buffer + size);
+	DEBUGLOG("recv id:" + to_string(id) + "/recv type:" + to_string(type) + "/recv data:" + data);
 	delete[] buffer;
 	LOG(data);
+	DEBUGLOGFRE;
 	return packet{id,type,data};
 }
 
 void ArkServer::updatePlayerList()
 {
-	if (!this->_connected)return;
+	DEBUGLOGFIN;
+	if (!this->_connected) {
+		DEBUGLOGFRE;
+		return;
+	}
+	DEBUGLOG("send listplayers");
 	this->sendData("listplayers", SERVERDATA_EXECCOMMAND);
 	auto re = this->waitForRecvData();
 	if (re.data.find("No Player") != string::npos) {
@@ -155,19 +171,15 @@ void ArkServer::updatePlayerList()
 	}
 	auto lastPnum = this->_player.size();
 	auto Pnum = player.size();
-	if (lastPnum == 0 && Pnum == 0) return;
-	if (lastPnum == 0 && Pnum != 0) {	//第一个进服的玩家或者程序第一次启动时
-#ifndef _DEBUG
-		this->saveworld();
-#endif // !_DEBUG
-
-
-		this->_player = player;	
+	if ((lastPnum == 0 && Pnum == 0) || Pnum==0) {	//no players in server 
+		DEBUGLOG(this->getServerName() + "No Player");
+		DEBUGLOGFRE;
 		return;
 	}
 	for (auto &i: player) {
 		auto p = this->_player.insert(i);
 		if (p.second) {
+			DEBUGLOG("Player JOIN:" + p.first->steamName + ";" + p.first->steamId);
 			LOG("Player Joined!" + p.first->steamId);
 		}
 	}
@@ -177,10 +189,12 @@ void ArkServer::updatePlayerList()
 	}
 #endif // _DEBUG
 	this->_player = player;
+	DEBUGLOGFRE;
 }
 
 void ArkServer::updateGameName()
 {
+	DEBUGLOGFIN;
 	if (!this->_connected)return;
 	vector<Player> players;
 	for (auto &i : this->_player)
@@ -194,45 +208,64 @@ void ArkServer::updateGameName()
 		i.gameName= string(head, tail);
 		this->_player.insert(i);
 	}
+	DEBUGLOGFRE;
 }
 
 void ArkServer::broadcast(std::string &data)
 {
-	if (!this->_connected)return;
+	DEBUGLOGFIN;
+	if (!this->_connected) {
+		DEBUGLOGFRE;
+		return;
+	}
 	this->sendData("broadcast " + data, SERVERDATA_EXECCOMMAND);
 	auto i = this->waitForRecvData();
+	DEBUGLOGFRE;
 }
 
 bool ArkServer::saveworld()
 {
+	DEBUGLOGFIN;
 	this->sendData("saveworld", SERVERDATA_EXECCOMMAND);
 	auto re = this->waitForRecvData();
 	LOG(re.data);
+	DEBUGLOG(re.data);
+	DEBUGLOGFRE;
 	return true;
 }
 
 ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 {
+	DEBUGLOGFIN;
 	if (!this->_connected)return{ -1,-1,"" };
 	this->sendData(data, SERVERDATA_EXECCOMMAND);
 	auto re = this->waitForRecvData();
 #ifdef _DEBUG
 	std::cout << re.data;
 #endif // _DEBUG
+	DEBUGLOG(re.data);
+	DEBUGLOGFRE;
 	return re;
 }
 
 void ArkServer::shutConnect()
 {
-	if (!this->_connected)return;
+	DEBUGLOGFIN;
+	if (!this->_connected) {
+		DEBUGLOGFRE;
+		return;
+	}
+	DEBUGLOG(this->getServerName() + " shutConnect");
 	closesocket(this->_client);
 	this->_id = 1;
 	this->_player.clear();
 	this->_connected = false;
+	DEBUGLOGFRE;
 }
 
 ArkServer::packet ArkServer::waitForRecvData()
 {
+	DEBUGLOGFIN;
 	int ID = this->_id - 1;
 	auto re = this->recvData();
 	int count = 0;
@@ -240,36 +273,51 @@ ArkServer::packet ArkServer::waitForRecvData()
 		Sleep(20);
 		re = this->recvData();
 		if (!this->_connected) {
+			DEBUGLOG(this->getServerName() + " lost connection");
 			LOG(this->getServerName() + "--lost connection!");
 			break;
 		}
 		if (count == 50 * 5)break;	//5秒还没接收到该包视为失败，直接跳出
 		count++;
 	}
+	if (count == 50 * 5) {
+		DEBUGLOG("wait for recv faild in 5 sec;failed id:" + to_string(ID));
+	}
+	DEBUGLOGFRE;
 	return re;
 }
 
 bool ArkServer::waitForAuth()
 {
+	DEBUGLOGFIN;
 	clock_t start, ends;
 	start = clock();
 	while (true) {
 		Sleep(10);
 		auto p = this->recvData();
 		if (p.type == SERVERDATA_AUTH_RESPONSE) {
-			if (p.id == -1)
+			if (p.id == -1) {
+				DEBUGLOG(this->getServerName() + " auth was refused");
+				DEBUGLOGFRE;
 				return false;
-			else
+			}
+			else {
+				DEBUGLOG(this->getServerName() + " auth was succeed");
+				DEBUGLOGFRE;
 				return true;
+			}
 		}
 		ends = clock();
 		if (ends - start > 500)break;	//500毫秒无回应自动超时返回false
 	}
+	DEBUGLOG(this->getServerName() + " auth was timeout int 500 msec");
+	DEBUGLOGFRE;
 	return false;
 }
 
 void ArkServer::pack(unsigned char packet[], const std::string data, int packet_len, int id, int type)
 {
+	DEBUGLOGFIN;
 	int data_len = packet_len - RCON_HEADER_SIZE;
 	memset(packet, 0, packet_len);	
 	packet[0] = data_len + 10;
@@ -277,13 +325,18 @@ void ArkServer::pack(unsigned char packet[], const std::string data, int packet_
 	packet[8] = type;
 	for (int i = 0; i < data_len; i++)
 		packet[12 + i] = data.c_str()[i];
-
+	DEBUGLOGFRE;
 }
 
 bool ArkServer::readPacket(unsigned char** buffer, size_t& size)
 {
+	DEBUGLOGFIN;
 	auto len = this->readPacketLen();
-	if (len == 0)return false;
+	if (len == 0) {
+		DEBUGLOGFRE;
+		return false;
+	}
+	DEBUGLOG("read a length:" + to_string(len));
 	size = len;
 	auto p = new unsigned char[len] {0};
 	*buffer = p;
@@ -294,32 +347,14 @@ bool ArkServer::readPacket(unsigned char** buffer, size_t& size)
 	unsigned int bytes = 0;
 	do bytes += recv(this->_client, (char*)(ptr+bytes), len - bytes, 0);
 	while (bytes < len);
+	DEBUGLOGFRE;
 	return true;
 }
 
 size_t ArkServer::readPacketLen()
 {
-	/*
+	DEBUGLOGFIN;
 	unsigned char* buffer = new unsigned char[4]{ 0 };
-	auto i = recv(this->_client, (char*)buffer, 4, 0);
-	if (i == -1) {
-		delete[]buffer;
-		return 0;
-	}
-	if (i == 0) {
-		delete[]buffer;
-		this->_connected = false;
-		LOG("Lost connection!");
-		return 0;
-	}
-	const size_t len = byte32ToInt(buffer);
-	LOG(len);
-	delete[] buffer;
-	return len;
-	*/
-
-	unsigned char* buffer = new unsigned char[4]{ 0 };
-
 	timeval timeout{ 0,500 };
 	fd_set rfd;
 	FD_ZERO(&rfd);
@@ -330,6 +365,7 @@ size_t ArkServer::readPacketLen()
 		if (FD_ISSET(this->_client, &rfd)) {
 			i = recv(this->_client, (char*)buffer, 4, 0);
 			if (i == 0 || i==-1) {
+				DEBUGLOG("lost connection");
 				this->_connected = false;
 				closesocket(this->_client);
 				this->_player.clear();
@@ -340,18 +376,27 @@ size_t ArkServer::readPacketLen()
 	size_t len = 0;
 	if (this->_connected && i == 4) {
 		len = byte32ToInt(buffer);
+		DEBUGLOG("len:" + to_string(len));
 		LOG(len);
 	}
+	else {
+		DEBUGLOG("read length err,only read " + to_string(i) + " bytes");
+	}
 	delete[] buffer;
+	DEBUGLOGFRE;
 	return len;
 	
 }
 
 size_t ArkServer::byte32ToInt(unsigned char* buffer) const
 {
-	return	static_cast<size_t>(
+	DEBUGLOGFIN;
+	size_t re= static_cast<size_t>(
 		static_cast<unsigned char>(buffer[0]) |
 		static_cast<unsigned char>(buffer[1]) << 8 |
 		static_cast<unsigned char>(buffer[2]) << 16 |
 		static_cast<unsigned char>(buffer[3]) << 24);
+	DEBUGLOG("byte32 to int:" + to_string(re));
+	DEBUGLOGFRE;
+	return	re;
 }

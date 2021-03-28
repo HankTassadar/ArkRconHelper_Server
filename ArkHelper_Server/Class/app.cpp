@@ -103,7 +103,7 @@ void ArkHelperServerAPP::inputThread()
 		this->_cmdQueueMutex.lock();
 		this->_cmd = cmdStr;
 		this->_cmdQueueMutex.unlock();
-
+		DEBUGLOG("cmdStr:" + cmdStr);
 		while (true) {	//等待命令结果并显示
 			this->_cmdResultMutex.lock();
 			if (this->_cmdResult != "") {
@@ -118,6 +118,7 @@ void ArkHelperServerAPP::inputThread()
 			}
 		}
 		COUT(cmdResult);
+		DEBUGLOG("cmdResult:" + cmdResult);
 		//更新退出信号
 		this->_exitMutex.lock();
 		exit_flag = *(this->_exitFlag);
@@ -129,6 +130,7 @@ void ArkHelperServerAPP::inputThread()
 	this->_exitMutex.lock();
 	this->_inputExit = true;
 	this->_exitMutex.unlock();
+	DEBUGLOG("inputThread Exit");
 }
 
 void ArkHelperServerAPP::mainWork()
@@ -136,19 +138,24 @@ void ArkHelperServerAPP::mainWork()
 	
 	this->solveInput();
 	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
+		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
+		DEBUGLOG("checkCrashed");
 		this->_update.checkCrashed();
 	}
 	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
+		DEBUGLOG("reconnect");
 		this->_rcon.reconnect();
 	}
 	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
+		DEBUGLOG("updateplayerlist");
 		this->_rcon.updateplayerlist();
 	}
 	if (this->_count % (50 * 60 * 1) == 0) {	//每分钟执行一次
 		
 	}
 	if (this->_count % (50 * 60 * 10) == 0) {	//每10分钟执行一次
+		DEBUGLOG("checkUpdate");
 		this->_update.checkUpdate();
 	}
 	this->_count++;
