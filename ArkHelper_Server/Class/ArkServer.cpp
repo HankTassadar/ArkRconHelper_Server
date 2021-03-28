@@ -80,6 +80,7 @@ bool ArkServer::sendData(const std::string data, const int type)
 			LOG("send error! ArkServer.cpp-53-error:" + WSAGetLastError());
 		}
 		else {
+			DEBUGLOG("send id:" + to_string(this->_id - 1) + "/send type:" + to_string(type) + "/send data:" + data);
 			delete[] packet;
 			DEBUGLOGFRE;
 			return true;
