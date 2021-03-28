@@ -268,6 +268,7 @@ ArkServer::packet ArkServer::waitForRecvData()
 {
 	DEBUGLOGFIN;
 	int ID = this->_id - 1;
+	DEBUGLOG("ID wait for recv id:" + to_string(ID));
 	auto re = this->recvData();
 	int count = 0;
 	while (re.id != ID) {
@@ -280,6 +281,7 @@ ArkServer::packet ArkServer::waitForRecvData()
 		}
 		if (count == 50 * 5)break;	//5秒还没接收到该包视为失败，直接跳出
 		count++;
+		DEBUGLOG("id recv:" + to_string(re.id));
 	}
 	if (count == 50 * 5) {
 		DEBUGLOG("wait for recv faild in 5 sec;failed id:" + to_string(ID));
