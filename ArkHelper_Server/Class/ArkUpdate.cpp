@@ -151,7 +151,7 @@ bool ArkUpdate::closeArkWindow(HWND hwnd)
 	SendNotifyMessage(hwnd, WM_CLOSE, 0, 0);
 	while (true) {	//wait for close finish
 		LPSTR winname = (LPSTR)new char[256];
-		memset(winname, 0, 256);
+		::memset(winname, 0, 256);
 		GetWindowTextA(hwnd, winname, 256);
 		string name(winname);
 		delete[](winname);
@@ -188,7 +188,7 @@ void ArkUpdate::arkCheckWindows()
 	EnumWindows([](HWND hwnd, LPARAM lParam)->BOOL {
 		auto ptr = (vector<ArkServer>*)lParam;
 		LPSTR a = (LPSTR)new char[256];
-		memset(a, 0, 256);
+		::memset(a, 0, 256);
 		GetWindowTextA(hwnd, a, 256);
 		std::string name(a);
 		if (name.find("ShooterGameServer.exe", 0) != string::npos) {
@@ -204,8 +204,8 @@ void ArkUpdate::arkCheckWindows()
 				length = path.find("\\ShooterGame\\Binaries", 0);
 			char* b = new char[128];
 			char* c = (char*)path.c_str() + 3;
-			memset(b, 0, 128);
-			memcpy(b, c, length - 3);
+			::memset(b, 0, 128);
+			::memcpy(b, c, length - 3);
 			string servername(b);
 			delete[](b);
 			for (auto& i : *ptr) {
