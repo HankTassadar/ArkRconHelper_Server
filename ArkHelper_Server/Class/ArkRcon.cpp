@@ -26,77 +26,77 @@ bool ArkRcon::init()
 
 void ArkRcon::updateplayerlist()
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	for (auto& i : this->_server) {
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->updatePlayerList();
 	}
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 }
 
 void ArkRcon::clearRecv()
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 		for (auto& i : this->_server) {
 			DEBUGLOG("Server name:" + i->getServerName());
 			i->clearRecv();
 		}
-	DEBUGLOG("Function return");
+		DEBUGLOGFRE;
 }
 
 void ArkRcon::broadcast(std::string& data)
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 		for (auto& i : this->_server) {
 			DEBUGLOG("Server name:" + i->getServerName());
 				i->broadcast(data);
 		}
-	DEBUGLOG("Function return");
+		DEBUGLOGFRE;
 }
 
 void ArkRcon::updateGameName()
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	for (auto& i : this->_server) {
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->updateGameName();
 	}
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 }
 
 void ArkRcon::sendCmdAndWiatForItRecv(const std::string& data)
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	for (auto& i : this->_server) {
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->sendCmdAndWiatForRecv(data);
 	}
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 }
 
 void ArkRcon::shutConnect()
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	for (auto& i : this->_server) {
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->shutConnect();
 	}
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 }
 
 void ArkRcon::reconnect()
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	for (auto& i : this->_server) {
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->init();
 	}
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 }
 
 bool ArkRcon::addServer(Rcon_addr addr)
 {
-	DEBUGLOG("Function in");
+	DEBUGLOGFIN;
 	bool re = false;
 	auto server = new ArkServer();
 	auto flag = server->init(addr);
@@ -111,7 +111,7 @@ bool ArkRcon::addServer(Rcon_addr addr)
 		LOG(server->getServerName() + " connect failed!");
 	}
 	this->_server.push_back(server);
-	DEBUGLOG("Function return");
+	DEBUGLOGFRE;
 	return re;
 }
 
