@@ -58,4 +58,4 @@ static std::string debuglogfilepos = "";
 #endif // !_DEBUG
 
 #define DEBUGLOGFIN DEBUGLOG("Function in")
-#define DEBUGLOGFRE DEBUGLOG("Function in")
+#define DEBUGLOGFRE DEBUGLOG("Function return")
