@@ -221,10 +221,10 @@ void ArkHelperServerAPP::solveInput()
 		string data = "";
  		CINUTF8(data); 
 		this->_rcon.broadcast(data); 
-		cmdResult = "Send OK!";
+		cmdResult += "Send OK!";
 	}
 	else if (cmd == "version") {
-		cmdResult = this->_update.getVersion();
+		cmdResult += this->_update.getVersion();
 	}
 	else if (cmd == "ban") {
 		COUT("Input the steamid of who you want to ban:");
