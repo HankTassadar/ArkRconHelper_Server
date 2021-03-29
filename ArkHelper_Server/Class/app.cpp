@@ -137,30 +137,41 @@ void ArkHelperServerAPP::mainWork()
 {
 	
 	this->solveInput();
+
 	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
+
 		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
 		DEBUGLOG("checkCrashed");
 		this->_update.checkCrashed();
+
 	}
 	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
+
 		DEBUGLOG("reconnect");
 		this->_rcon.reconnect();
+
 	}
 	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
+
 		DEBUGLOG("updateplayerlist");
 		this->_rcon.updateplayerlist();
+
 	}
 	if (this->_count % (50 * 60 * 1) == 0) {	//每分钟执行一次
-		
+				
 	}
 	if (this->_count % (50 * 60 * 10) == 0) {	//每10分钟执行一次
+
 		DEBUGLOG("checkUpdate");
 		this->_update.checkUpdate();
+
 	}
+
 	this->_count++;
 	if (this->_count % (3600 * 50) == 0)this->_count = 0;
 	Sleep(20);
+
 }
 
 void ArkHelperServerAPP::solveInput()
@@ -170,11 +181,15 @@ void ArkHelperServerAPP::solveInput()
 	this->_cmdQueueMutex.lock();
 	cmd = this->_cmd;
 	this->_cmd = "";
-	this->_cmdQueueMutex.unlock();                                                                                                                                                       
+	this->_cmdQueueMutex.unlock();   
+
 	if (cmd == "") {
+
 		return;
+
 	}
 	else if (cmd == "help") {
+
 		cmdResult += "showonline--this cmd show you all online players\n"
 			"broadcast--send a broadcast mseeage to all servers\n"
 			"version--show the newest version of ARK Server\n"
@@ -183,30 +198,46 @@ void ArkHelperServerAPP::solveInput()
 			"shutdown--shutdown all server which is in Config.json\n"
 			"restartall--restart all server(if not started,start server)\n"
 			"update--update all server\n"
-			"shopreload--reload the shop config(don't use if you have no shop plugin)\n"
+			"shopreload--reload all server's shop config(don't use if you have no shop plugin)\n"
+			"state--show if server is connected with rcon\n"
 			"exit--ues to exit this progrma\n";
+
 	}
 	else if (cmd == "exit") {
+
 		this->_exitMutex.lock();
 		*(this->_exitFlag) = true;
 		this->_exitMutex.unlock();
 		cmdResult += "EXIT!";
+
 	}
 	else if (cmd == "showonline") {
+
 		COUT("Whether you would like to know player's game character name? y/n");
 		string yn = "";
+
 		while (yn != "y"&&yn != "n")	CIN(yn);
+
 		if (yn == "n") {
+
 			cmdResult = "-------------------------------\n";
+
 			for (auto &i : this->_rcon._server) {
+
 				auto m = i->getPlayers();
+
 				if (m.size() != 0) {
+
 					cmdResult += i->getServerName() + "\n";
 					for (auto &j : m)
 						cmdResult += j.steamName + ":" + j.steamId + "\n";
+
 				}
+
 			}
+
 			cmdResult += "-------------------------------\n";
+
 		}
 		else {
 			this->_rcon.updateGameName();
@@ -222,52 +253,109 @@ void ArkHelperServerAPP::solveInput()
 			}
 			cmdResult += "-------------------------------\n";
 		}
+
 	}
 	else if (cmd == "broadcast") {
+
 		COUT("Input what you want to send: ");
 		string data = "";
  		CINUTF8(data); 
 		this->_rcon.broadcast(data); 
 		cmdResult += "Send OK!";
+
 	}
 	else if (cmd == "version") {
+
 		cmdResult += this->_update.getVersion();
+
 	}
 	else if (cmd == "ban") {
+
 		COUT("Input the steamid of who you want to ban:");
 		string steamid;
 		CIN(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("banplayer " + steamid);
 		cmdResult = "OK!";
+
 	}
 	else if (cmd == "unban") {
+
 		COUT("Input the steamid of who you want to unban:");
 		string steamid;
 		CIN(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("unbanplayer " + steamid);
 		cmdResult = "OK!";
+
 	}
 	else if (cmd == "shutdown") {
+
 		this->_update.closeAll();
 		cmdResult += "OK!";
+
 	}
 	else if (cmd == "restartall") {
+
 		this->_update.arkRestart();
 		cmdResult += "OK!";
+
 	}
 	else if (cmd == "update") {
+
 		this->_rcon.shutConnect();
 		COUT(TimeClass().TimeNow() + "--Rcon connections have beed all shutdown!");
 		this->_update.arkUpdate();
 		COUT(TimeClass().TimeNow() + "--Update Finished!");
 		cmdResult += "OK!";
+
 	}
 	else if (cmd == "shopreload") {
+
 		this->_rcon.sendCmdAndWiatForItRecv("arkshop.reload");
 		cmdResult += "OK!";
+
+	}
+	else if (cmd == "state") {
+
+		auto state = this->_rcon.getState();
+		int onlineNum = 0;
+
+		cmdResult += "\nServers Online ";
+
+		string offline;
+		for (auto& i : *state) {
+
+			if (i.second)onlineNum++;
+
+		}
+
+		cmdResult += to_string(onlineNum) + "/" + to_string(state->size()) + "\n\n";
+
+		for (auto& i : *state) {
+
+			if (i.second) {
+
+				cmdResult += i.first + "--";
+				cmdResult += "connected\n";
+
+			}
+			else {
+
+				offline += i.first + "--";
+				offline += "disconnected\n";
+
+			}
+
+		}
+
+		if(offline!="")
+			cmdResult += "OffLine\n" + offline;
+
+		delete(state);
 	}
 	else {
+
 		cmdResult = "error CMD! Input \"help\" for more CMD";
+
 	}
 
 	this->_cmdResultMutex.lock();

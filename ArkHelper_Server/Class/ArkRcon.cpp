@@ -94,6 +94,23 @@ void ArkRcon::reconnect()
 	DEBUGLOGFRE;
 }
 
+std::vector<std::pair<std::string, bool>>* ArkRcon::getState()
+{
+	DEBUGLOGFIN
+	auto re = new vector<pair<string, bool>>();
+
+	for (auto& i : this->_server) {
+
+		DEBUGLOG("Server name:" + i->getServerName());
+		(*re).push_back(make_pair(i->getServerName(), i->connectedState()));
+
+	}
+
+	DEBUGLOGFRE;
+	return re;
+
+}
+
 bool ArkRcon::addServer(Rcon_addr addr)
 {
 	DEBUGLOGFIN;

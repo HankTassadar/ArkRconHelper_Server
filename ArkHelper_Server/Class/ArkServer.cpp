@@ -74,7 +74,7 @@ bool ArkServer::sendData(const std::string data, const int type)
 	DEBUGLOG("send data length:" + to_string(packet_len));
 	unsigned char *packet=new unsigned char[packet_len];
 
-	if (this->_id = 256)this->_id = 1; DEBUGLOG("id=256,set id=1");//
+	if (this->_id == 256)this->_id = 1; DEBUGLOG("id=256,set id=1");//the massage id max is 255,if id=256,server will return id=0
 
 	this->pack(packet, data, packet_len,this->_id++ , type);
 

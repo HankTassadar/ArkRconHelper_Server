@@ -44,9 +44,22 @@ public:
 	*/
 	void sendCmdAndWiatForItRecv(const std::string&);
 
+	/**
+	* shutdown all server's rcon connecting
+	*/
 	void shutConnect();
 
+	/**
+	* reconnect all server's rcon
+	*/
 	void reconnect();
+
+	/**
+	* get add server state
+	* if server online,return pair<string servername,bool ifonline>
+	*/
+	std::vector<std::pair<std::string, bool>>* getState();
+
 public:
 	std::vector<ArkServer*> _server;
 };
