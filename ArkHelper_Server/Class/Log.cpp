@@ -6,7 +6,7 @@ using namespace MyLog;
 void Log::logoutUTF8(const std::string &loginfo)
 {
 	this->_myMutex.lock();
-	file << loginfo.c_str() << std::endl;
+	file << loginfo << std::endl;
 	file.flush();
 	this->_myMutex.unlock();
 }
