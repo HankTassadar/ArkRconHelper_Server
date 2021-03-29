@@ -135,7 +135,9 @@ void ArkHelperServerAPP::inputThread()
 
 void ArkHelperServerAPP::mainWork()
 {
-	
+	clock_t start, ends;
+	start = clock();
+
 	this->solveInput();
 
 	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
@@ -169,8 +171,16 @@ void ArkHelperServerAPP::mainWork()
 	}
 
 	this->_count++;
+
 	if (this->_count % (3600 * 50) == 0)this->_count = 0;
-	Sleep(20);
+
+	ends = clock();
+
+	if (ends - start < 20) {//完成时间小于20ms
+
+		Sleep(ends - start - 1);
+
+	}
 
 }
 
