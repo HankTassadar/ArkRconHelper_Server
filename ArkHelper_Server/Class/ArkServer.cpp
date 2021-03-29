@@ -25,16 +25,21 @@ bool ArkServer::init(Rcon_addr addr)
 
 bool ArkServer::init()
 {
+	DEBUGLOGFIN;
+	if (this->_connected) {
 
-	if (this->_connected)return true;
+		DEBUGLOGFRE; return true;
 
-	this->_connected = false;
+	}
+
+	this->_id = 1;
 	this->_client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (this->_client == INVALID_SOCKET) {
 
-		LOG("create socket error!" + WSAGetLastError())
-			return false;
+		DEBUGLOG("create socket error!" + to_string(WSAGetLastError()));
+		LOG("create socket error!" + WSAGetLastError());
+		DEBUGLOGFRE; return false;
 
 	}
 
@@ -50,16 +55,15 @@ bool ArkServer::init()
 
 		if (WSAGetLastError() != WSAEWOULDBLOCK) {
 
+			DEBUGLOG(to_string(WSAGetLastError()));
 			LOG(WSAGetLastError());
-			return false;
+			DEBUGLOGFRE; return false;
 
 		}
 
 	}
 
-	struct timeval timeout;	//三秒内没有连接上直接返回超时
-	timeout.tv_sec = 3;
-	timeout.tv_usec = 0;
+	struct timeval timeout {0,500};	//500ms内没有连接上直接返回超时
 
 	fd_set rfd;
 	FD_ZERO(&rfd);
@@ -68,21 +72,71 @@ bool ArkServer::init()
 
 	if (ret <= 0) {
 
-		this->_connected = false;
+		DEBUGLOG("socket connected failed");
 		return false;
 
 	}
 
-	this->_connected = true;
 	return this->auth();
 }
 
 bool ArkServer::auth()
 {
+	DEBUGLOGFIN;
 
 	this->sendData(this->_rconAddr.password, SERVERDATA_AUTH);
-	return this->waitForAuth();
 
+	if (this->waitForAuth()) {
+
+		DEBUGLOG("auth succeed");
+		this->_connected = true;
+		DEBUGLOGFRE; return true;
+
+	}
+
+
+	DEBUGLOGFRE; return false;
+
+}
+
+bool ArkServer::waitForAuth()
+{
+	DEBUGLOGFIN;
+
+	clock_t start, ends;
+	start = clock();
+
+	while (true) {
+
+		Sleep(10);
+		auto p = this->recvData();
+
+		if (p.type == SERVERDATA_AUTH_RESPONSE) {
+
+			if (p.id == -1) {
+
+				DEBUGLOG(this->getServerName() + " auth was refused");
+				DEBUGLOGFRE; return false;
+
+			}
+			else {
+
+				DEBUGLOG(this->getServerName() + " auth was succeed");
+				DEBUGLOGFRE; return true;
+
+			}
+
+		}
+
+		ends = clock();
+
+		if (ends - start > 300)break;	//300毫秒无回应自动超时返回false
+
+	}
+
+	DEBUGLOG(this->getServerName() + " auth was timeout int 500 msec");
+
+	DEBUGLOGFRE; return false;
 }
 
 bool ArkServer::sendData(const std::string data, const int type)
@@ -402,34 +456,6 @@ ArkServer::packet ArkServer::waitForRecvData()
 	}
 	DEBUGLOGFRE;
 	return re;
-}
-
-bool ArkServer::waitForAuth()
-{
-	DEBUGLOGFIN;
-	clock_t start, ends;
-	start = clock();
-	while (true) {
-		Sleep(10);
-		auto p = this->recvData();
-		if (p.type == SERVERDATA_AUTH_RESPONSE) {
-			if (p.id == -1) {
-				DEBUGLOG(this->getServerName() + " auth was refused");
-				DEBUGLOGFRE;
-				return false;
-			}
-			else {
-				DEBUGLOG(this->getServerName() + " auth was succeed");
-				DEBUGLOGFRE;
-				return true;
-			}
-		}
-		ends = clock();
-		if (ends - start > 500)break;	//500毫秒无回应自动超时返回false
-	}
-	DEBUGLOG(this->getServerName() + " auth was timeout int 500 msec");
-	DEBUGLOGFRE;
-	return false;
 }
 
 void ArkServer::pack(unsigned char packet[], const std::string data, int packet_len, int id, int type)
