@@ -77,6 +77,7 @@ bool ArkServer::init()
 
 	}
 
+	this->_connected = true;
 	return this->auth();
 }
 
@@ -94,7 +95,7 @@ bool ArkServer::auth()
 
 	}
 
-
+	this->_connected = false;
 	DEBUGLOGFRE; return false;
 
 }
