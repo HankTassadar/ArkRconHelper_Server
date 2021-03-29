@@ -17,19 +17,27 @@ ArkServer::~ArkServer()
 
 bool ArkServer::init(Rcon_addr addr)
 {
+
 	this->_rconAddr = addr;
 	return this->init();
+
 }
 
 bool ArkServer::init()
 {
+
 	if (this->_connected)return true;
+
 	this->_connected = false;
 	this->_client = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
 	if (this->_client == INVALID_SOCKET) {
+
 		LOG("create socket error!" + WSAGetLastError())
 			return false;
+
 	}
+
 	sockaddr_in serAddr;
 	serAddr.sin_family = AF_INET;
 	serAddr.sin_port = htons(this->_rconAddr.port);
@@ -39,11 +47,16 @@ bool ArkServer::init()
 	ioctlsocket(this->_client, FIONBIO, &argp);//非阻塞
 
 	if (connect(this->_client, (sockaddr*)(&serAddr), sizeof(serAddr)) == SOCKET_ERROR) {
+
 		if (WSAGetLastError() != WSAEWOULDBLOCK) {
+
 			LOG(WSAGetLastError());
 			return false;
+
 		}
+
 	}
+
 	struct timeval timeout;	//三秒内没有连接上直接返回超时
 	timeout.tv_sec = 3;
 	timeout.tv_usec = 0;
@@ -52,9 +65,12 @@ bool ArkServer::init()
 	FD_ZERO(&rfd);
 	FD_SET(this->_client, &rfd);
 	auto ret = select(0, 0, &rfd, 0, &timeout);
+
 	if (ret <= 0) {
+
 		this->_connected = false;
 		return false;
+
 	}
 
 	this->_connected = true;
@@ -63,19 +79,26 @@ bool ArkServer::init()
 
 bool ArkServer::auth()
 {
+
 	this->sendData(this->_rconAddr.password, SERVERDATA_AUTH);
 	return this->waitForAuth();
+
 }
 
 bool ArkServer::sendData(const std::string data, const int type)
 {
+
 	DEBUGLOGFIN;
 	int packet_len = data.length() + RCON_HEADER_SIZE;
 	DEBUGLOG("send data length:" + to_string(packet_len));
 	unsigned char *packet=new unsigned char[packet_len];
 
-	if (this->_id == 256)this->_id = 1; DEBUGLOG("id=256,set id=1");//the massage id max is 255,if id=256,server will return id=0
+	if (this->_id == 256) {//the massage id max is 255,if id=256,server will return id=0
 
+		this->_id = 1;
+		DEBUGLOG("id=256,set id=1");
+
+	}
 	this->pack(packet, data, packet_len,this->_id++ , type);
 
 	if (this->_connected) {
@@ -100,72 +123,100 @@ bool ArkServer::sendData(const std::string data, const int type)
 	delete[] packet;
 	DEBUGLOGFRE;
 	return false;
+
 }
 
 void ArkServer::clearRecv()
 {
 	DEBUGLOGFIN;
+
 	if (!this->_connected)return;
+
 	while (true) {
+
 		auto i = this->recvData();
+
 		if (i.id == -1 && i.type == -1)break;
 
 		if (i.id == 0 && i.type == 0) {	//keep alive包
+
 			DEBUGLOG("recv a keepalive pack");
+
 		}
-		
 		//处理接收到的其他种类的包
 	}
+
 	DEBUGLOGFRE;
 }
 
 ArkServer::packet ArkServer::recvData()
 {
 	DEBUGLOGFIN;
+
 	unsigned char* buffer=nullptr;
 	size_t size=0;
 	auto ret = this->readPacket(&buffer, size);
+
 	if (!ret) {
+
 		DEBUGLOGFRE;
 		return packet{ -1,-1,"" };
+
 	}
+
 	int id = this->byte32ToInt(buffer);
 	int type = this->byte32ToInt(buffer + 4);
 	string data(buffer + 8, buffer + size);
 	DEBUGLOG("recv id:" + to_string(id) + "/recv type:" + to_string(type) + "/recv data:" + data);
 	delete[] buffer;
 	LOG(data);
+
 	DEBUGLOGFRE;
 	return packet{id,type,data};
+
 }
 
 void ArkServer::updatePlayerList()
 {
 	DEBUGLOGFIN;
+
 	if (!this->_connected) {
-		DEBUGLOGFRE;
-		return;
+
+		DEBUGLOGFRE; return;
+
 	}
+
 	DEBUGLOG("send listplayers");
 	this->sendData("listplayers", SERVERDATA_EXECCOMMAND);
 	auto re = this->waitForRecvData();
+
 	if (re.data.find("No Player") != string::npos) {
+
 		this->_player.clear();
-		return;
+		DEBUGLOGFRE; return;
+
 	}
+
 	LOG(this->getServerName()+re.data);
+
 	//检查在线玩家数量
 	int playernum = -1;
 	int pos = re.data.find("\n", 0);
+
 	do {
+
 		playernum++;
 		pos = re.data.find("\n", pos+1);
+
 	} while (pos != string::npos);
+
 	//获取在线玩家信息
 	pos = 0;
 	char* ptr = (char*)re.data.c_str();
 	set<Player> player;
+
 	for (auto i = 0; i < playernum; i++) {	//将所有玩家信息加入一个set中
+
 		Player p;
 		auto head = re.data.find('\n', pos);
 		auto namehead = re.data.find(". ", pos);
@@ -173,53 +224,105 @@ void ArkServer::updatePlayerList()
 		p.steamName = string(ptr + namehead + 2, ptr + nametail);
 		auto temp_ptr = ptr;
 		temp_ptr += nametail;
+
 		while (!isdigit(*temp_ptr++));
+
 		auto idhead = temp_ptr - 1;
+
 		while (isdigit(*temp_ptr++));
+
 		auto idtail = temp_ptr - 1;
 		p.steamId = string(idhead, idtail);
 		player.insert(p);
 		pos = re.data.find('\n', pos + 1);
+
 	}
+
 	auto lastPnum = this->_player.size();
 	auto Pnum = player.size();
+
 	if ((lastPnum == 0 && Pnum == 0) || Pnum==0) {	//no players in server 
+
 		DEBUGLOG(this->getServerName() + "No Player");
-		DEBUGLOGFRE;
-		return;
+		DEBUGLOGFRE; return;
+
 	}
+
 	for (auto &i: player) {
+
 		auto p = this->_player.insert(i);
+
 		if (p.second) {
+
 			DEBUGLOG("Player JOIN:" + p.first->steamName + ";" + p.first->steamId);
 			LOG("Player Joined!" + p.first->steamId);
+
 		}
+
 	}
+
 #ifndef _DEBUG
+
 	if (this->_player.size() > lastPnum) {
+
 		this->saveworld();
+
 	}
+
 #endif // _DEBUG
+
 	this->_player = player;
+
 	DEBUGLOGFRE;
 }
 
 void ArkServer::updateGameName()
 {
 	DEBUGLOGFIN;
-	if (!this->_connected)return;
+
+	if (!this->_connected) {
+
+		DEBUGLOGFRE; return;
+
+	}
+
 	vector<Player> players;
-	for (auto &i : this->_player)
-		players.push_back(i);
-	this->_player.clear();
+
+	auto iter = this->_player.begin();
+
+	while (iter != this->_player.end()) {
+
+		if (iter->gameName == "") {
+
+			players.push_back(*iter);
+			this->_player.erase(iter++);
+
+		}
+		else {
+
+			iter++;
+
+		}
+
+	}
+
+	if (players.size() == 0) {
+
+		DEBUGLOGFRE; return;
+
+	}
+
 	for (auto &i : players) {
+
 		this->sendData("getplayername " + i.steamId, SERVERDATA_EXECCOMMAND);
 		auto re = this->waitForRecvData();
 		char* head = (char*)re.data.c_str() + re.data.find("- ") + 2;
 		char* tail = (char*)re.data.c_str() + re.data.find("\n");
 		i.gameName= string(head, tail);
 		this->_player.insert(i);
+
 	}
+
 	DEBUGLOGFRE;
 }
 
