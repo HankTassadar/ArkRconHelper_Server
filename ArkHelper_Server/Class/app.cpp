@@ -178,6 +178,7 @@ void ArkHelperServerAPP::mainWork()
 	ends = clock();
 
 	unsigned long interval = 1000.0 / this->_frame;
+	DEBUGLOG("Used " + to_string(ends - start) + "ms");
 
 	if (ends - start < interval) {//完成时间小于20ms
 
