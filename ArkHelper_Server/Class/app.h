@@ -77,4 +77,7 @@ private:
 
 	//方舟更新
 	ArkUpdate _update;
+
+	//运行帧率
+	int _frame;
 };

@@ -32,8 +32,9 @@ ArkHelperServerAPP::ArkHelperServerAPP()
 	, _count(0)
 	, _cmd("")
 	, _cmdResult("")
-	,_appLog(MyLog::Log::createLog("AppLog/AppLog"))
-	,_rconConfig(new JsonOperate())
+	, _appLog(MyLog::Log::createLog("AppLog/AppLog"))
+	, _rconConfig(new JsonOperate())
+	, _frame(50)
 {
 }
 
@@ -140,7 +141,7 @@ void ArkHelperServerAPP::mainWork()
 
 	this->solveInput();
 
-	if (this->_count % (50 * 1 * 1) == 0) {	//每1秒执行一次
+	if (this->_count % (this->_frame * 1 * 1) == 0) {	//每1秒执行一次
 
 		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
@@ -148,22 +149,22 @@ void ArkHelperServerAPP::mainWork()
 		this->_update.checkCrashed();
 
 	}
-	if (this->_count % (50 * 10 * 1) == 0) {	//每10秒执行一次
+	if (this->_count % (this->_frame * 10 * 1) == 0) {	//每10秒执行一次
 
 		DEBUGLOG("reconnect");
 		this->_rcon.reconnect();
 
 	}
-	if (this->_count % (50 * 5 * 1) == 0) {	//每5秒执行一次
+	if (this->_count % (this->_frame * 5 * 1) == 0) {	//每5秒执行一次
 
 		DEBUGLOG("updateplayerlist");
 		this->_rcon.updateplayerlist();
 
 	}
-	if (this->_count % (50 * 60 * 1) == 0) {	//每分钟执行一次
+	if (this->_count % (this->_frame * 60 * 1) == 0) {	//每分钟执行一次
 				
 	}
-	if (this->_count % (50 * 60 * 10) == 0) {	//每10分钟执行一次
+	if (this->_count % (this->_frame * 60 * 10) == 0) {	//每10分钟执行一次
 
 		DEBUGLOG("checkUpdate");
 		this->_update.checkUpdate();
@@ -172,14 +173,16 @@ void ArkHelperServerAPP::mainWork()
 
 	this->_count++;
 
-	if (this->_count % (3600 * 50) == 0)this->_count = 0;
+	if (this->_count % (3600 * this->_frame) == 0)this->_count = 0;
 
 	ends = clock();
 
-	if (ends - start < 20) {//完成时间小于20ms
+	unsigned long interval = 1000.0 / this->_frame;
 
-		DEBUGLOG("Sleep for " + to_string(20 - (ends - start) - 1) + "ms");
-		Sleep(20 - (ends - start) - 1);
+	if (ends - start < interval) {//完成时间小于20ms
+
+		DEBUGLOG("Sleep for " + to_string(interval - (ends - start) - 1) + "ms");
+		Sleep(interval - (ends - start) - 1);
 
 	}
 
