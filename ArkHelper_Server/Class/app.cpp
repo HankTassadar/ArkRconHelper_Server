@@ -149,22 +149,22 @@ void ArkHelperServerAPP::mainWork()
 		this->_update.checkCrashed();
 
 	}
-	if (this->_count % (this->_frame * 10 * 1) == 0) {	//每10秒执行一次
-
-		DEBUGLOG("reconnect");
-		this->_rcon.reconnect();
-
-	}
-	if (this->_count % (this->_frame * 5 * 1) == 0) {	//每5秒执行一次
+	if (this->_count % (this->_frame * 5 * 1) == 10) {	//每5秒执行一次
 
 		DEBUGLOG("updateplayerlist");
 		this->_rcon.updateplayerlist();
 
 	}
-	if (this->_count % (this->_frame * 60 * 1) == 0) {	//每分钟执行一次
+	if (this->_count % (this->_frame * 10 * 1) == 20) {	//每10秒执行一次
+
+		DEBUGLOG("reconnect");
+		this->_rcon.reconnect();
+
+	}
+	if (this->_count % (this->_frame * 60 * 1) == 30) {	//每分钟执行一次
 				
 	}
-	if (this->_count % (this->_frame * 60 * 10) == 0) {	//每10分钟执行一次
+	if (this->_count % (this->_frame * 60 * 10) == 40) {	//每10分钟执行一次
 
 		DEBUGLOG("checkUpdate");
 		this->_update.checkUpdate();
@@ -173,7 +173,7 @@ void ArkHelperServerAPP::mainWork()
 
 	this->_count++;
 
-	if (this->_count % (3600 * this->_frame) == 0)this->_count = 0;
+	if (this->_count % (3600 * 24 * this->_frame) == 0)this->_count = 0;
 
 	ends = clock();
 
