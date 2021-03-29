@@ -73,19 +73,30 @@ bool ArkServer::sendData(const std::string data, const int type)
 	int packet_len = data.length() + RCON_HEADER_SIZE;
 	DEBUGLOG("send data length:" + to_string(packet_len));
 	unsigned char *packet=new unsigned char[packet_len];
+
+	if (this->_id = 256)this->_id = 1; DEBUGLOG("id=256,set id=1");//
+
 	this->pack(packet, data, packet_len,this->_id++ , type);
+
 	if (this->_connected) {
+
 		if (send(this->_client, (const char*)packet, packet_len, 0) < 0) {
+
 			DEBUGLOG("send error!" + to_string(WSAGetLastError()));
 			LOG("send error! ArkServer.cpp-53-error:" + WSAGetLastError());
+
 		}
 		else {
+
 			DEBUGLOG("send id:" + to_string(this->_id - 1) + "/send type:" + to_string(type) + "/send data:" + data);
 			delete[] packet;
 			DEBUGLOGFRE;
 			return true;
+
 		}
+
 	}
+
 	delete[] packet;
 	DEBUGLOGFRE;
 	return false;
