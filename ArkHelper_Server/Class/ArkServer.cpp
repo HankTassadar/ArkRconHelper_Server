@@ -131,11 +131,11 @@ bool ArkServer::waitForAuth()
 
 		ends = clock();
 
-		if (ends - start > 300)break;	//300毫秒无回应自动超时返回false
+		if (ends - start > 200)break;	//200毫秒无回应自动超时返回false
 
 	}
 
-	DEBUGLOG(this->getServerName() + " auth was timeout int 500 msec");
+	DEBUGLOG(this->getServerName() + " auth was timeout in 200 msec");
 
 	DEBUGLOGFRE; return false;
 }
@@ -166,7 +166,7 @@ bool ArkServer::sendData(const std::string data, const int type)
 		}
 		else {
 
-			DEBUGLOG("send id:" + to_string(this->_id - 1) + "/send type:" + to_string(type) + "/send data:" + data);
+			DEBUGLOG("\nsend id:" + to_string(this->_id - 1) + "/send type:" + to_string(type) + "/send data:" + data + "\n");
 			delete[] packet;
 			DEBUGLOGFRE;
 			return true;
@@ -222,7 +222,7 @@ ArkServer::packet ArkServer::recvData()
 	int id = this->byte32ToInt(buffer);
 	int type = this->byte32ToInt(buffer + 4);
 	string data(buffer + 8, buffer + size);
-	DEBUGLOG("recv id:" + to_string(id) + "/recv type:" + to_string(type) + "/recv data:" + data);
+	DEBUGLOG("\nrecv id:" + to_string(id) + "/recv type:" + to_string(type) + "/recv data:" + data + "\n");
 	delete[] buffer;
 	LOG(data);
 
