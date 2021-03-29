@@ -178,8 +178,8 @@ void ArkHelperServerAPP::mainWork()
 
 	if (ends - start < 20) {//完成时间小于20ms
 
-		DEBUGLOG("Sleep for " + to_string(ends - start -1) + "ms");
-		Sleep(ends - start - 1);
+		DEBUGLOG("Sleep for " + to_string(ends - start) + "ms");
+		Sleep(ends - start);
 
 	}
 
