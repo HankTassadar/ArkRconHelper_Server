@@ -64,6 +64,13 @@ public:
 		return this->_netVersion;
 	}
 
+	std::vector<ArkServer>& getServer() {
+		return this->_arkServerWindow;
+	}
+
+	void log(std::string str) {
+		this->_updateLog->logoutUTF8(str);
+	}
 private:
 	/**
 	* update the newest ark server version number from http://arkdedicated.com/version 
@@ -88,6 +95,7 @@ private:
 	* 根据配置文件检查所有窗口
 	*/
 	void arkCheckWindows();
+
 
 private:
 	//更新日志

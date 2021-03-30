@@ -219,7 +219,7 @@ void ArkUpdate::arkCheckWindows()
 
 	//save the ark server window hwnd in this->_arkServerWindow
 	EnumWindows([](HWND hwnd, LPARAM lParam)->BOOL {
-		auto ptr = (vector<ArkServer>*)lParam;
+		auto ptr = (ArkUpdate*)lParam;
 		LPSTR a = (LPSTR)new char[256];
 		::memset(a, 0, 256);
 		GetWindowTextA(hwnd, a, 256);
@@ -232,16 +232,22 @@ void ArkUpdate::arkCheckWindows()
 			string path;
 			ss >> path;
 
-			size_t length = path.find("/ShooterGame/Binaries/Win64/ShooterGameServer.exe", 0);
-			if (length == -1)
-				length = path.find("\\ShooterGame\\Binaries", 0);
+			size_t tail = path.find("/ShooterGame/Binaries/Win64/ShooterGameServer.exe", 0);
+			if (tail == -1)
+				tail = path.find("\\ShooterGame\\Binaries", 0);
+			size_t head = path.rfind("/", tail-1);
+			if (head == string::npos)
+				head = path.rfind("\\", tail-1);
 			char* b = new char[128];
-			char* c = (char*)path.c_str() + 3;
+			char* c = (char*)path.c_str() + head + 1;
 			::memset(b, 0, 128);
-			::memcpy(b, c, length - 3);
+			::memcpy(b, c, tail - head - 1);
 			string servername(b);
+
+			ptr->log(servername);
+			
 			delete[](b);
-			for (auto& i : *ptr) {
+			for (auto& i : ptr->getServer()) {
 				if (i.name == servername) {
 			#ifdef _DEBUG
 					std::cout << hwnd << endl;
@@ -252,7 +258,7 @@ void ArkUpdate::arkCheckWindows()
 		}
 		delete[](a);
 		return TRUE; 
-		}, (LPARAM)(&(this->_arkServerWindow)));
+		}, (LPARAM)(this));
 }
 
 
