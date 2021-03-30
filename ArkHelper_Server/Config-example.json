@@ -1,4 +1,8 @@
 ﻿{
+  "Mode": {
+    "InputMode": false,
+    "WorkMode": true
+  },
   "IP": "192.168.1.7",
   "steamcmdPath": "E:/steamcmd/steamcmd.exe",
   "startCmdAdd": "MaxPlayers=70?ServerAutoForceRespawnWildDinosInterval=86400?AllowCrateSpawnsOnTopOfStructures=True -AutoDestroyStructures -EnableIdlePlayerKick -clusterid=891223834 -ClusterDirOverride=\"E:\\steamcmd\" -NoTransferFromFiltering -UseBattlEye -servergamelog -usecache -nomemorybias -StasisKeepControllers -NoHangDetection -nosteamclient -game -server -log",
