@@ -39,7 +39,7 @@ ArkHelperServerAPP::ArkHelperServerAPP()
 	, _inputModeActive(false)
 	, _workModeActive(false)
 	, _keepWindowOpen(true)
-	, _monitorExit(false)
+	, _monitorKeep(true)
 {
 }
 
@@ -51,6 +51,7 @@ int ArkHelperServerAPP::run(bool *exit)
 
 	if (this->_inputModeActive) {	//active input mode 开启输入模式
 
+		this->_monitorKeep = false;
 		std::thread input(&ArkHelperServerAPP::inputThread, this);//命令输入线程
 		input.detach();
 
@@ -209,13 +210,8 @@ void ArkHelperServerAPP::work()
 
 	if (this->_count % (this->_frame * 1 * 1) == 0) {	//每1秒执行一次
 
-		if (!this->_inputModeActive)this->drawState();
-		else {
 
-			if (!this->_monitorExit)
-				this->drawState();
-
-		}
+		this->drawState();
 
 		if (this->_keepWindowOpen) {
 
@@ -496,6 +492,9 @@ void ArkHelperServerAPP::solveInput()
 
 void ArkHelperServerAPP::drawState()
 {
+	if (this->_inputModeActive && (!this->_workModeActive))return;
+
+	if (!this->_monitorKeep)return;
 
 	string ui;
 	for (auto& i: this->_rcon._server){

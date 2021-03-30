@@ -96,5 +96,5 @@ private:
 	bool _inputModeActive;
 	bool _workModeActive;
 	bool _keepWindowOpen;	//保持服务器开启（崩溃自动重启）
-	bool _monitorExit;
+	bool _monitorKeep;
 };
