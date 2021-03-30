@@ -481,7 +481,7 @@ void ArkHelperServerAPP::solveInput()
 	else {
 		
 		this->_monitorKeep = false;
-		cmdResult = "error CMD! Input \"help\" for more CMD";
+		cmdResult = "\033[0merror CMD! Input \"help\" for more CMD";
 
 	}
 
