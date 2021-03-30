@@ -501,6 +501,21 @@ void ArkHelperServerAPP::drawState()
 
 	DEBUGLOG("start draw");
 	string ui;
+	size_t namelen = 0;
+
+	for (auto& i : this->_rcon._server) {
+
+		if (i->getServerName().size() > namelen)
+			namelen = i->getServerName().size();
+
+	}
+
+	DEBUGLOG("namelen = " + to_string(namelen));
+
+	namelen = (namelen / 10 + 1) * 10;
+
+	DEBUGLOG("namelen = " + to_string(namelen));
+
 	for (auto& i: this->_rcon._server){
 
 		string line = "";
@@ -510,8 +525,8 @@ void ArkHelperServerAPP::drawState()
 			
 			line += "------" + i->getServerName();
 
-			DEBUGLOG("ui.size() = " + to_string(line.size()));
-			auto len = 20 - line.size();
+			DEBUGLOG("line.size() = " + to_string(line.size()));
+			auto len = namelen + 10 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
@@ -522,7 +537,7 @@ void ArkHelperServerAPP::drawState()
 			}
 
 			line += "Online";
-			len = 30 - line.size();
+			len = namelen + 30 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
@@ -549,7 +564,7 @@ void ArkHelperServerAPP::drawState()
 
 
 			line += "------" + i->getServerName();
-			auto len = 20 - line.size();
+			auto len = namelen + 10 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
@@ -560,7 +575,7 @@ void ArkHelperServerAPP::drawState()
 			}
 
 			line += "Offline";
-			len = 30 - line.size();
+			len = namelen + 30 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
