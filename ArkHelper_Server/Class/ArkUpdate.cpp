@@ -173,7 +173,7 @@ void ArkUpdate::arkRestart()
 				+ " " + i.map + "?listen?Port=" + i.listenPort + "?QueryPort=" + i.queryPort + "?RconPort=" + i.rconPort + "?" 
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
 			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
-			system(startCmd.c_str());
+			::system(startCmd.c_str());
 			Sleep(3000);
 		}
 	}
@@ -181,10 +181,36 @@ void ArkUpdate::arkRestart()
 
 void ArkUpdate::arkCheckWindows()
 {
-	for (auto &i : this->_arkServerWindow) {
-		i.hwnd = NULL;
+
+	bool reflag = true;
+
+	for (auto& i : this->_arkServerWindow) {
+
+		LPSTR winname = (LPSTR)new char[256];
+		::memset(winname, 0, 256);
+		GetWindowTextA(i.hwnd, winname, 256);
+		string name(winname);
+		delete[](winname);
+
+		if (name == "") {
+
+			reflag = false;
+			break;
+
+		}
+
 	}
-	//save the ark server window hwnd in this->_arkServerWindow中
+
+	//如果所有窗口句柄都存在窗口，直接返回
+	if (reflag)return;
+
+	for (auto &i : this->_arkServerWindow) {
+
+		i.hwnd = NULL;
+
+	}
+
+	//save the ark server window hwnd in this->_arkServerWindow
 	EnumWindows([](HWND hwnd, LPARAM lParam)->BOOL {
 		auto ptr = (vector<ArkServer>*)lParam;
 		LPSTR a = (LPSTR)new char[256];

@@ -11,7 +11,7 @@
 #include"TimeClass.h"
 #pragma comment(lib,"iconv.lib")
 
-namespace MyLog{
+namespace MyLog {
 
 	void log(std::string);
 
@@ -19,6 +19,7 @@ namespace MyLog{
 
 	std::string UTF8toGBK(std::string);
 	class Log {
+
 	public:
 		static Log* createLog(std::string);
 
@@ -30,14 +31,14 @@ namespace MyLog{
 	private:
 		Log() {};
 
-		
+
 
 	private:
 		std::ofstream file;
 		std::mutex _myMutex;
 	};
 
-}
+};
 
 static MyLog::Log* debuglog = MyLog::Log::createLog("AppLog/DebugLog");
 static std::string debuglogfilepos = "";

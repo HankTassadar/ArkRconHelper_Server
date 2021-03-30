@@ -209,6 +209,8 @@ void ArkHelperServerAPP::work()
 
 		if (!this->_inputModeActive && this->_workModeActive)this->drawState();
 
+		DEBUGLOG("restartAll");
+		this->_update.arkRestart();
 		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
 		DEBUGLOG("checkCrashed");
@@ -268,8 +270,8 @@ void ArkHelperServerAPP::solveInput()
 			"update--update all server\n"
 			"shopreload--reload all server's shop config(don't use if you have no shop plugin)\n"
 			"state--show if server is connected with rcon\n"
-			"kick--kick player from server"
-			"reconnect--reconnect the server which is offline"
+			"kick--kick player from server\n"
+			"reconnect--reconnect the server which is offline\n"
 			"exit--ues to exit this progrma\n";
 
 	}
@@ -469,7 +471,6 @@ void ArkHelperServerAPP::solveInput()
 	this->_cmdResultMutex.unlock();
 }
 
-
 void ArkHelperServerAPP::drawState()
 {
 
@@ -505,5 +506,6 @@ void ArkHelperServerAPP::drawState()
 
 	::system("cls");
 	COUT(ui);
+
 }
 
