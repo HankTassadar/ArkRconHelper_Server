@@ -480,8 +480,14 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else {
 		
-		this->_monitorKeep = false;
-		cmdResult = "\033[0merror CMD! Input \"help\" for more CMD";
+		if (this->_monitorKeep) {
+
+			this->_monitorKeep = false;
+			cmdResult += "\033[0";
+
+		}
+
+		cmdResult += "Error CMD! Input \"help\" for more CMD";
 
 	}
 
@@ -501,10 +507,19 @@ void ArkHelperServerAPP::drawState()
 
 		if (i->connectedState()) {
 
-			ui += "\033[1;32;40m";
-			ui += "------" + i->getServerName() + "------";
+
+			ui += "------" + i->getServerName();
+			auto len = 20 - ui.size();
+			for (size_t j = 0; j < len; j++) {
+				ui += "-";
+			}
 			ui += "Online";
-			ui += "-------\n\033[0m";
+			len = 30 - ui.size();
+			for (size_t j = 0; j < len; j++) {
+				ui += "-";
+			}
+			ui = "\033[1;32;40m" + ui;
+			ui += "\n\033[0m";
 
 			for (auto& j : i->getPlayers()) {
 
@@ -512,15 +527,24 @@ void ArkHelperServerAPP::drawState()
 
 			}
 
-			ui += "\033[1;32;40m-------------------------------------\n\n";
+			ui += "\033[1;32;40m------------------------------\033[0m\n\n";
 
 		}
 		else {
 
-			ui += "\033[1;31;40m";
-			ui += "------" + i->getServerName() + "------";
+
+			ui += "------" + i->getServerName();
+			auto len = 20 - ui.size();
+			for (size_t j = 0; j < len; j++) {
+				ui += "-";
+			}
 			ui += "Offline";
-			ui += "-------\n\n";
+			len = 30 - ui.size();
+			for (size_t j = 0; j < len; j++) {
+				ui += "-";
+			}
+			ui += "\033[0m\n\n";
+			ui = "\033[1;31;40m" + ui;
 
 		}
 		
