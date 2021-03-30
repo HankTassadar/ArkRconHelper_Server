@@ -347,8 +347,17 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "version") {
 
-		cmdResult += this->_update.getVersion();
+		if (!this->_workModeActive) {
 
+			if (this->_update.checkUpdate()) {
+
+				cmdResult += "Need Update!\n";
+
+			}
+
+			cmdResult += this->_update.getVersion();
+		
+		}
 	}
 	else if (cmd == "ban") {
 
@@ -460,6 +469,7 @@ void ArkHelperServerAPP::solveInput()
 	this->_cmdResultMutex.unlock();
 }
 
+
 void ArkHelperServerAPP::drawState()
 {
 
@@ -493,7 +503,7 @@ void ArkHelperServerAPP::drawState()
 		
 	}
 
-	system("cls");
+	::system("cls");
 	COUT(ui);
 }
 
