@@ -9,16 +9,15 @@ BOOL CALLBACK CosonleHandler(DWORD ev)
 	switch (ev)
 	{
 		// the user wants to exit. 
+	
 	case CTRL_CLOSE_EVENT:
 		// Handle the CTRL-C signal. 
 	case CTRL_C_EVENT:
 	case CTRL_SHUTDOWN_EVENT:
 	case CTRL_LOGOFF_EVENT:
+		//MessageBox(NULL, L"CTRL+BREAK received!", L"CEvent", MB_OK);
 		g_bExit = true;
-		// 停住，让主线程执行清理任务
-		WaitForSingleObject(g_hEvent, -1);
-		// 注意事件在这里清理
-		CloseHandle(g_hEvent);
+		WaitForSingleObject(g_hEvent, INFINITY);
 		bRet = TRUE;
 		break;
 	default:
@@ -40,18 +39,27 @@ int main()
 	//程序运行
     auto app = ArkHelperServerAPP::create();
 	if (app) {
+
 		std::cout << "Init Succeed!" << std::endl;
 		app->run(&g_bExit);
+
+		
 		delete(app);
+
 	}
 	else {
+
 		std::cout << "Init Failed！See Log File to the detials." << std::endl;
 		Sleep(2000);
+
 	}
-	//std::cout << CurlOperate::get("http://2021.ip138.com");
 	
-	SetEvent(g_hEvent);
 	DEBUGLOG("Program Exit");
+	SetEvent(g_hEvent);
+	// 注意事件在这里清理
+	CloseHandle(g_hEvent);
+	SetConsoleCtrlHandler(CosonleHandler, FALSE);
+
 	return 1;
 }
 

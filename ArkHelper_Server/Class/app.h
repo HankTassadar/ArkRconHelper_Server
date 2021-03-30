@@ -43,8 +43,20 @@ private:
 	//主要工作线程函数，所有的工作都在此线程上完成
 	void mainWork();
 
-	//崩服重启检测
+	/**
+	*后台工作内容
+	*/
+	void work();
+
+	/**
+	* 处理输入命令
+	*/
 	void solveInput();
+
+	/**
+	* 绘制服务器状态UI
+	*/
+	void drawState();
 
 private:
 	//退出flag指针
@@ -80,4 +92,7 @@ private:
 
 	//运行帧率
 	int _frame;
+
+	bool _inputModeActive;
+	bool _workModeActive;
 };

@@ -24,28 +24,35 @@ ArkHelperServerAPP::~ArkHelperServerAPP()
 	}
 	this->impl = nullptr;
 	delete(this->_appLog);
+	DEBUGLOG("app destructure");
 }
 
 ArkHelperServerAPP::ArkHelperServerAPP()
 	:_exitFlag(nullptr)
-	, _inputExit(false)
+	, _inputExit(true)
 	, _count(0)
 	, _cmd("")
 	, _cmdResult("")
 	, _appLog(MyLog::Log::createLog("AppLog/AppLog"))
 	, _rconConfig(new JsonOperate())
 	, _frame(50)
+	, _inputModeActive(false)
+	, _workModeActive(false)
 {
 }
 
 int ArkHelperServerAPP::run(bool *exit)
 {
+
 	this->_exitFlag = exit;
 	bool exit_flag = false;
-	bool input_exit = false;
 
-	std::thread input(&ArkHelperServerAPP::inputThread, this);//命令输入线程
-	input.detach();
+	if (this->_inputModeActive) {	//active input mode 开启输入模式
+
+		std::thread input(&ArkHelperServerAPP::inputThread, this);//命令输入线程
+		input.detach();
+
+	}
 
 	do {
 		this->mainWork();
@@ -61,43 +68,62 @@ int ArkHelperServerAPP::run(bool *exit)
 
 bool ArkHelperServerAPP::init()
 {
+
 	if (!this->_rcon.init())return false;
+
 	this->_rconConfig->openFile("Config.json");
 	auto root = this->_rconConfig->getRoot();
+	this->_inputModeActive = root["Mode"]["InputMode"].asBool();
+	this->_workModeActive = root["Mode"]["WorkMode"].asBool();
+
 	struct server{
 		string name;
 		string ip;
 		u_short port = 0;
 		string pass;
 	};
+
 	vector<server> servers;
 	auto allservers = root["Servers"];
+
 	for (auto &i : allservers) {
+
 		server s;
 		s.name = i["name"].asString();
 		s.ip = root["IP"].asString();
 		s.port = i["RconPort"].asInt();
 		s.pass= i["AdminPass"].asString();
 		servers.push_back(s);
+
 	}
+
 	for (auto &i : servers) {
+
 		auto flag = this->_rcon.addServer(Rcon_addr{ i.name,i.ip,i.port,i.pass });
-		if (flag)this->_appLog->logoutUTF8(TimeClass().TimeNow() + " " + i.name + "--connected succeed!");
+		if (flag)
+			this->_appLog->logoutUTF8(TimeClass().TimeNow() + " " + i.name + "--connected succeed!");
 		else {
+
 			this->_appLog->logoutUTF8(TimeClass().TimeNow() + " " + i.name + "--connected faild!");
 			COUT(i.name + "--connected failed!");
+
 		}
+
 	}
+
 	return true;
 }
 
 void ArkHelperServerAPP::inputThread()
 {
+	this->_inputExit = false;
 	bool exit_flag = false;
 	std::string cmdStr = "";
 	std::string cmdResult = "";
+
 	while (!exit_flag)
 	{
+
 		cmdStr.clear();
 		std::cout << "# ark->";
 		CIN(cmdStr);
@@ -105,26 +131,40 @@ void ArkHelperServerAPP::inputThread()
 		this->_cmd = cmdStr;
 		this->_cmdQueueMutex.unlock();
 		DEBUGLOG("cmdStr:" + cmdStr);
-		while (true) {	//等待命令结果并显示
+
+		while (!exit_flag) {	//等待命令结果并显示
+
 			this->_cmdResultMutex.lock();
+
 			if (this->_cmdResult != "") {
+
 				cmdResult = this->_cmdResult;
 				this->_cmdResult = "";
 				this->_cmdResultMutex.unlock();
 				break;
+
 			}
 			else {
+
 				this->_cmdResultMutex.unlock();
 				Sleep(20);
+				this->_exitMutex.lock();
+				exit_flag = *(this->_exitFlag);
+				this->_exitMutex.unlock();
+
 			}
+
 		}
+
 		COUT(cmdResult);
 		DEBUGLOG("cmdResult:" + cmdResult);
+		cmdStr = "";
+
 		//更新退出信号
 		this->_exitMutex.lock();
 		exit_flag = *(this->_exitFlag);
 		this->_exitMutex.unlock();
-		cmdStr = "";
+
 	}
 
 	//发送输入线程退出信号
@@ -139,9 +179,35 @@ void ArkHelperServerAPP::mainWork()
 	clock_t start, ends;
 	start = clock();
 
-	this->solveInput();
+	if (this->_inputModeActive) this->solveInput();
+
+	if (this->_workModeActive)this->work();
+
+	this->_count++;
+
+	if (this->_count % (3600 * 24 * this->_frame) == 0)this->_count = 0;
+
+	ends = clock();
+
+	unsigned long interval = 1000.0 / this->_frame;
+	DEBUGLOG("Used " + to_string(ends - start) + "ms");
+
+	if (ends - start < interval) {//完成时间小于20ms
+
+		DEBUGLOG("Sleep for " + to_string(interval - (ends - start) - 1) + "ms");
+		Sleep(interval - (ends - start) - 1);
+
+	}
+
+}
+
+void ArkHelperServerAPP::work()
+{
+	DEBUGLOGFIN;
 
 	if (this->_count % (this->_frame * 1 * 1) == 0) {	//每1秒执行一次
+
+		if (!this->_inputModeActive && this->_workModeActive)this->drawState();
 
 		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
@@ -162,7 +228,7 @@ void ArkHelperServerAPP::mainWork()
 
 	}
 	if (this->_count % (this->_frame * 60 * 1) == 30) {	//每分钟执行一次
-				
+
 	}
 	if (this->_count % (this->_frame * 60 * 10) == 40) {	//每10分钟执行一次
 
@@ -171,22 +237,7 @@ void ArkHelperServerAPP::mainWork()
 
 	}
 
-	this->_count++;
-
-	if (this->_count % (3600 * 24 * this->_frame) == 0)this->_count = 0;
-
-	ends = clock();
-
-	unsigned long interval = 1000.0 / this->_frame;
-	DEBUGLOG("Used " + to_string(ends - start) + "ms");
-
-	if (ends - start < interval) {//完成时间小于20ms
-
-		DEBUGLOG("Sleep for " + to_string(interval - (ends - start) - 1) + "ms");
-		Sleep(interval - (ends - start) - 1);
-
-	}
-
+	DEBUGLOGFRE;
 }
 
 void ArkHelperServerAPP::solveInput()
@@ -197,6 +248,8 @@ void ArkHelperServerAPP::solveInput()
 	cmd = this->_cmd;
 	this->_cmd = "";
 	this->_cmdQueueMutex.unlock();   
+
+	if (!this->_workModeActive)this->_rcon.clearRecv();
 
 	if (cmd == "") {
 
@@ -215,6 +268,8 @@ void ArkHelperServerAPP::solveInput()
 			"update--update all server\n"
 			"shopreload--reload all server's shop config(don't use if you have no shop plugin)\n"
 			"state--show if server is connected with rcon\n"
+			"kick--kick player from server"
+			"reconnect--reconnect the server which is offline"
 			"exit--ues to exit this progrma\n";
 
 	}
@@ -227,6 +282,8 @@ void ArkHelperServerAPP::solveInput()
 
 	}
 	else if (cmd == "showonline") {
+
+		if (!this->_workModeActive)this->_rcon.updateplayerlist();
 
 		COUT("Whether you would like to know player's game character name? y/n");
 		string yn = "";
@@ -255,18 +312,27 @@ void ArkHelperServerAPP::solveInput()
 
 		}
 		else {
+
 			this->_rcon.updateGameName();
 			cmdResult = "-------------------------------\n";
+
 			for (auto &i : this->_rcon._server) {
+
 				auto m = i->getPlayers();
+
 				if (m.size() != 0) {
+
 					cmdResult += i->getServerName() + "\n";
 					for (auto &j : m)
 						cmdResult += "SteamName:" + j.steamName + "; " 
 						+ "GameCharacterName:" + j.gameName + "; SteamId:" + j.steamId + "\n";
+				
 				}
+
 			}
+
 			cmdResult += "-------------------------------\n";
+
 		}
 
 	}
@@ -289,6 +355,7 @@ void ArkHelperServerAPP::solveInput()
 		COUT("Input the steamid of who you want to ban:");
 		string steamid;
 		CIN(steamid);
+		this->_rcon.kick(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("banplayer " + steamid);
 		cmdResult = "OK!";
 
@@ -367,6 +434,21 @@ void ArkHelperServerAPP::solveInput()
 
 		delete(state);
 	}
+	else if (cmd == "kick") {
+
+		COUT("Input the player's steamid you want to kick:");
+		string steamid;
+		CIN(steamid);
+		this->_rcon.kick(steamid);
+		cmdResult += "OK!";
+
+	}
+	else if (cmd == "reconnect") {
+
+		this->_rcon.reconnect();
+		cmdResult += "OK!";
+
+	}
 	else {
 
 		cmdResult = "error CMD! Input \"help\" for more CMD";
@@ -376,5 +458,42 @@ void ArkHelperServerAPP::solveInput()
 	this->_cmdResultMutex.lock();
 	this->_cmdResult = cmdResult;
 	this->_cmdResultMutex.unlock();
+}
+
+void ArkHelperServerAPP::drawState()
+{
+
+	string ui;
+	for (auto& i: this->_rcon._server){
+
+		if (i->connectedState()) {
+
+			ui += "\033[1;32;40m";
+			ui += "------" + i->getServerName() + "------";
+			ui += "Online";
+			ui += "-------\n\033[0m";
+
+			for (auto& j : i->getPlayers()) {
+
+				ui += j.steamId + "-----" + j.steamName + "\n";
+
+			}
+
+			ui += "\033[1;32;40m-------------------------------------\n\n";
+
+		}
+		else {
+
+			ui += "\033[1;31;40m";
+			ui += "------" + i->getServerName() + "------";
+			ui += "Offline";
+			ui += "-------\n\n";
+
+		}
+		
+	}
+
+	system("cls");
+	COUT(ui);
 }
 

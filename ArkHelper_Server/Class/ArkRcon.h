@@ -55,6 +55,11 @@ public:
 	void reconnect();
 
 	/**
+	* kick player out of server
+	*/
+	void kick(const std::string&);
+
+	/**
 	* get add server state
 	* if server online,return pair<string servername,bool ifonline>
 	*/

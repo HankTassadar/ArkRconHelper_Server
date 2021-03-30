@@ -51,7 +51,7 @@ void ArkRcon::broadcast(std::string& data)
 			DEBUGLOG("Server name:" + i->getServerName());
 				i->broadcast(data);
 		}
-		DEBUGLOGFRE;
+	DEBUGLOGFRE;
 }
 
 void ArkRcon::updateGameName()
@@ -91,6 +91,30 @@ void ArkRcon::reconnect()
 		DEBUGLOG("Server name:" + i->getServerName());
 		i->init();
 	}
+	DEBUGLOGFRE;
+}
+
+void ArkRcon::kick(const std::string& steamid)
+{
+	DEBUGLOGFIN;
+
+	for (auto& i : this->_server) {
+
+		auto players = i->getPlayers();
+
+		for (auto& j : players) {
+
+			if (j.steamId == steamid) {
+
+				i->sendCmdAndWiatForRecv("kickplayer " + steamid);
+				DEBUGLOG("steamid:" + steamid + "--name:" + j.steamName + "--kicked!");
+				break;
+			}
+
+		}
+
+	}
+
 	DEBUGLOGFRE;
 }
 
