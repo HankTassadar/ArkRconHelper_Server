@@ -503,33 +503,38 @@ void ArkHelperServerAPP::drawState()
 	string ui;
 	for (auto& i: this->_rcon._server){
 
+		string line = "";
+
 		if (i->connectedState()) {
 
+			
+			line += "------" + i->getServerName();
 
-			ui += "------" + i->getServerName();
-			auto len = 30 - ui.size();
-
-			DEBUGLOG("len = " + to_string(len));
-
-			for (size_t j = 0; j < len; j++) {
-
-				ui += "-";
-
-			}
-
-			ui += "Online";
-			len = 50 - ui.size();
+			DEBUGLOG("ui.size() = " + to_string(line.size()));
+			auto len = 20 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
 			for (size_t j = 0; j < len; j++) {
 
-				ui += "-";
+				line += "-";
 
 			}
 
-			ui = "\033[1;32;40m" + ui;
-			ui += "\n\033[0m";
+			line += "Online";
+			len = 30 - line.size();
+
+			DEBUGLOG("len = " + to_string(len));
+
+			for (size_t j = 0; j < len; j++) {
+
+				line += "-";
+
+			}
+
+			line = "\033[1;32;40m" + line;
+			line += "\n\033[0m";
+			ui += line;
 
 			for (auto& j : i->getPlayers()) {
 
@@ -543,31 +548,31 @@ void ArkHelperServerAPP::drawState()
 		else {
 
 
-			ui += "------" + i->getServerName();
-			auto len = 30 - ui.size();
+			line += "------" + i->getServerName();
+			auto len = 20 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
 			for (size_t j = 0; j < len; j++) {
 
-				ui += "-";
+				line += "-";
 
 			}
 
-			ui += "Offline";
-			len = 50 - ui.size();
+			line += "Offline";
+			len = 30 - line.size();
 
 			DEBUGLOG("len = " + to_string(len));
 
 			for (size_t j = 0; j < len; j++) {
 
-				ui += "-";
+				line += "-";
 
 			}
 
-			ui += "\033[0m\n\n";
-			ui = "\033[1;31;40m" + ui;
-
+			line += "\033[0m\n\n";
+			line = "\033[1;31;40m" + line;
+			ui += line;
 		}
 		
 	}
