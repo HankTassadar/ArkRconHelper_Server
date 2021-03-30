@@ -493,10 +493,13 @@ void ArkHelperServerAPP::solveInput()
 
 void ArkHelperServerAPP::drawState()
 {
+	DEBUGLOGFIN;
+
 	if (this->_inputModeActive && (!this->_workModeActive))return;
 
 	if (!this->_monitorKeep)return;
 
+	DEBUGLOG("start draw");
 	string ui;
 	for (auto& i: this->_rcon._server){
 
@@ -505,14 +508,26 @@ void ArkHelperServerAPP::drawState()
 
 			ui += "------" + i->getServerName();
 			auto len = 30 - ui.size();
+
+			DEBUGLOG("len = " + to_string(len));
+
 			for (size_t j = 0; j < len; j++) {
+
 				ui += "-";
+
 			}
+
 			ui += "Online";
 			len = 50 - ui.size();
+
+			DEBUGLOG("len = " + to_string(len));
+
 			for (size_t j = 0; j < len; j++) {
+
 				ui += "-";
+
 			}
+
 			ui = "\033[1;32;40m" + ui;
 			ui += "\n\033[0m";
 
@@ -530,14 +545,26 @@ void ArkHelperServerAPP::drawState()
 
 			ui += "------" + i->getServerName();
 			auto len = 30 - ui.size();
+
+			DEBUGLOG("len = " + to_string(len));
+
 			for (size_t j = 0; j < len; j++) {
+
 				ui += "-";
+
 			}
+
 			ui += "Offline";
 			len = 50 - ui.size();
+
+			DEBUGLOG("len = " + to_string(len));
+
 			for (size_t j = 0; j < len; j++) {
+
 				ui += "-";
+
 			}
+
 			ui += "\033[0m\n\n";
 			ui = "\033[1;31;40m" + ui;
 
@@ -547,6 +574,6 @@ void ArkHelperServerAPP::drawState()
 
 	::system("cls");
 	COUT(ui);
-
+	DEBUGLOGFRE;
 }
 
