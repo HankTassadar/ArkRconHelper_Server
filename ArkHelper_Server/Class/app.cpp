@@ -281,7 +281,7 @@ void ArkHelperServerAPP::solveInput()
 			"state--show if server is connected with rcon\n"
 			"kick--kick player from server\n"
 			"reconnect--reconnect the server which is offline\n"
-			"monitor--start monitor mode,input any cmd will exit this mode\n"
+			"monitor--start monitor mode,input any error cmd will exit this mode\n"
 			"exit--ues to exit this progrma\n";
 
 	}
@@ -474,13 +474,13 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "monitor") {
 
-		this->_monitorExit = true;
+		this->_monitorKeep = true;
 		cmdResult += "OK!";
 
 	}
 	else {
 		
-		this->_monitorExit = false;
+		this->_monitorKeep = false;
 		cmdResult = "error CMD! Input \"help\" for more CMD";
 
 	}
