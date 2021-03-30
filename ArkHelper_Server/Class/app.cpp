@@ -38,6 +38,8 @@ ArkHelperServerAPP::ArkHelperServerAPP()
 	, _frame(50)
 	, _inputModeActive(false)
 	, _workModeActive(false)
+	, _keepWindowOpen(true)
+	, _monitorExit(false)
 {
 }
 
@@ -207,10 +209,21 @@ void ArkHelperServerAPP::work()
 
 	if (this->_count % (this->_frame * 1 * 1) == 0) {	//每1秒执行一次
 
-		if (!this->_inputModeActive && this->_workModeActive)this->drawState();
+		if (!this->_inputModeActive)this->drawState();
+		else {
 
-		DEBUGLOG("restartAll");
-		this->_update.arkRestart();
+			if (!this->_monitorExit)
+				this->drawState();
+
+		}
+
+		if (this->_keepWindowOpen) {
+
+			DEBUGLOG("restartAll");
+			this->_update.arkRestart();
+
+		}
+
 		DEBUGLOG("clearRecv");
 		this->_rcon.clearRecv();
 		DEBUGLOG("checkCrashed");
@@ -272,6 +285,7 @@ void ArkHelperServerAPP::solveInput()
 			"state--show if server is connected with rcon\n"
 			"kick--kick player from server\n"
 			"reconnect--reconnect the server which is offline\n"
+			"monitor--start monitor mode,input any cmd will exit this mode\n"
 			"exit--ues to exit this progrma\n";
 
 	}
@@ -382,12 +396,14 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "shutdown") {
 
+		this->_keepWindowOpen = false;
 		this->_update.closeAll();
 		cmdResult += "OK!";
 
 	}
 	else if (cmd == "restartall") {
 
+		this->_keepWindowOpen = true;
 		this->_update.arkRestart();
 		cmdResult += "OK!";
 
@@ -460,8 +476,15 @@ void ArkHelperServerAPP::solveInput()
 		cmdResult += "OK!";
 
 	}
-	else {
+	else if (cmd == "monitor") {
 
+		this->_monitorExit = true;
+		cmdResult += "OK!";
+
+	}
+	else {
+		
+		this->_monitorExit = false;
 		cmdResult = "error CMD! Input \"help\" for more CMD";
 
 	}
