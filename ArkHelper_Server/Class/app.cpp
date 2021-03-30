@@ -504,12 +504,12 @@ void ArkHelperServerAPP::drawState()
 
 
 			ui += "------" + i->getServerName();
-			auto len = 20 - ui.size();
+			auto len = 30 - ui.size();
 			for (size_t j = 0; j < len; j++) {
 				ui += "-";
 			}
 			ui += "Online";
-			len = 30 - ui.size();
+			len = 50 - ui.size();
 			for (size_t j = 0; j < len; j++) {
 				ui += "-";
 			}
@@ -529,12 +529,12 @@ void ArkHelperServerAPP::drawState()
 
 
 			ui += "------" + i->getServerName();
-			auto len = 20 - ui.size();
+			auto len = 30 - ui.size();
 			for (size_t j = 0; j < len; j++) {
 				ui += "-";
 			}
 			ui += "Offline";
-			len = 30 - ui.size();
+			len = 50 - ui.size();
 			for (size_t j = 0; j < len; j++) {
 				ui += "-";
 			}
