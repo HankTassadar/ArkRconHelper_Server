@@ -439,13 +439,13 @@ void ArkHelperServerAPP::solveInput()
 
 			if (i.second) {
 
-				cmdResult += i.first + "--";
+				cmdResult += i.first + " -- ";
 				cmdResult += "\033[1;32;40m" + string(text["state"][1].asString().c_str()) + "\033[0m\n";
 
 			}
 			else {
 
-				cmdResult += i.first + "--";
+				cmdResult += i.first + " -- ";
 				cmdResult += "\033[1;31;40m" + string(text["state"][2].asString().c_str()) + "\033[0m\n";
 
 			}
