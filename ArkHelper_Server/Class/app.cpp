@@ -124,6 +124,9 @@ void ArkHelperServerAPP::inputThread()
 	std::string cmdStr = "";
 	std::string cmdResult = "";
 
+	this->drawState();
+	system("cls");
+
 	while (!exit_flag)
 	{
 
@@ -253,6 +256,8 @@ void ArkHelperServerAPP::work()
 
 void ArkHelperServerAPP::solveInput()
 {
+	DEBUGLOGFIN;
+
 	string cmd = "";
 	string cmdResult = "";
 	this->_cmdQueueMutex.lock();
@@ -267,7 +272,7 @@ void ArkHelperServerAPP::solveInput()
 	auto text = root["Language"][language];
 	if (cmd == "") {
 
-		return;
+		DEBUGLOGFRE;return;
 
 	}
 	else if (cmd == "help") {
@@ -419,6 +424,8 @@ void ArkHelperServerAPP::solveInput()
 
 	}
 	else if (cmd == "state") {
+		
+	DEBUGLOG("state");
 
 		auto state = this->_rcon.getState();
 		int onlineNum = 0;
@@ -439,18 +446,19 @@ void ArkHelperServerAPP::solveInput()
 
 			if (i.second) {
 
-				cmdResult += i.first + " -- ";
-				cmdResult += "\033[1;32;40m" + string(text["state"][1].asString().c_str()) + "\033[0m\n";
+				cmdResult += "\033[0m " + i.first + " -- ";
+				cmdResult += "\033[1;32;40m " + string(text["state"][1].asString().c_str()) + " \n";
 
 			}
 			else {
 
-				cmdResult += i.first + " -- ";
-				cmdResult += "\033[1;31;40m" + string(text["state"][2].asString().c_str()) + "\033[0m\n";
+				cmdResult += "\033[0m " + i.first + " -- ";
+				cmdResult += "\033[1;31;40m " + string(text["state"][2].asString().c_str()) + " \n";
 
 			}
 
 		}
+		cmdResult += "\033[0m";
 
 		delete(state);
 	}
