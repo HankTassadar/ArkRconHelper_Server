@@ -262,6 +262,9 @@ void ArkHelperServerAPP::solveInput()
 
 	if (!this->_workModeActive)this->_rcon.clearRecv();
 
+	auto root = this->_rconConfig->getRoot();
+	string language = root["Language"]["Language"].asString();
+	auto text = root["Language"][language];
 	if (cmd == "") {
 
 		return;
@@ -269,20 +272,11 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "help") {
 
-		cmdResult += "showonline--this cmd show you all online players\n"
-			"broadcast--send a broadcast mseeage to all servers\n"
-			"version--show the newest version of ARK Server\n"
-			"ban--ban player\n"
-			"unban--unban player\n"
-			"shutdown--shutdown all server which is in Config.json\n"
-			"restartall--restart all server(if not started,start server)\n"
-			"update--update all server\n"
-			"shopreload--reload all server's shop config(don't use if you have no shop plugin)\n"
-			"state--show if server is connected with rcon\n"
-			"kick--kick player from server\n"
-			"reconnect--reconnect the server which is offline\n"
-			"monitor--start monitor mode,input any error cmd will exit this mode\n"
-			"exit--ues to exit this progrma\n";
+		for (auto& i : text["help"]) {
+
+			cmdResult += i.asString();
+
+		}
 
 	}
 	else if (cmd == "exit") {
@@ -297,7 +291,7 @@ void ArkHelperServerAPP::solveInput()
 
 		if (!this->_workModeActive)this->_rcon.updateplayerlist();
 
-		COUT("Whether you would like to know player's game character name? y/n");
+		COUT(text["showonline"][0].asString());
 		string yn = "";
 
 		while (yn != "y"&&yn != "n")	CIN(yn);
@@ -350,7 +344,7 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "broadcast") {
 
-		COUT("Input what you want to send: ");
+		COUT(text["broadcast"][0].asString());
 		string data = "";
  		CINUTF8(data); 
 		this->_rcon.broadcast(data); 
@@ -359,21 +353,26 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "version") {
 
+		bool needupdate = false;
+
 		if (!this->_workModeActive) {
 
-			if (this->_update.checkUpdate()) {
-
-				cmdResult += "Need Update!\n";
-
-			}
-
-			cmdResult += this->_update.getVersion();
+			needupdate = this->_update.checkUpdate();
 		
 		}
+
+		if (needupdate) {
+
+			cmdResult += text["version"][0].asString();
+
+		}
+		
+		cmdResult += this->_update.getVersion();
+
 	}
 	else if (cmd == "ban") {
 
-		COUT("Input the steamid of who you want to ban:");
+		COUT(text["ban"][0].asString());
 		string steamid;
 		CIN(steamid);
 		this->_rcon.kick(steamid);
@@ -383,7 +382,7 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "unban") {
 
-		COUT("Input the steamid of who you want to unban:");
+		COUT(text["unban"][0].asString());
 		string steamid;
 		CIN(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("unbanplayer " + steamid);
@@ -407,9 +406,9 @@ void ArkHelperServerAPP::solveInput()
 	else if (cmd == "update") {
 
 		this->_rcon.shutConnect();
-		COUT(TimeClass().TimeNow() + "--Rcon connections have beed all shutdown!");
+		COUT(TimeClass().TimeNow() + text["update"][0].asString());
 		this->_update.arkUpdate();
-		COUT(TimeClass().TimeNow() + "--Update Finished!");
+		COUT(TimeClass().TimeNow() + text["update"][1].asString());
 		cmdResult += "OK!";
 
 	}
@@ -424,7 +423,8 @@ void ArkHelperServerAPP::solveInput()
 		auto state = this->_rcon.getState();
 		int onlineNum = 0;
 
-		cmdResult += "\nServers Online ";
+		cmdResult += "\n";
+		cmdResult += text["state"][0].asString();
 
 		string offline;
 		for (auto& i : *state) {
@@ -439,27 +439,24 @@ void ArkHelperServerAPP::solveInput()
 
 			if (i.second) {
 
-				cmdResult += i.first + "--";
-				cmdResult += "connected\n";
+				cmdResult += i.first + "--\033[1;32;40m";
+				cmdResult += text["state"][1].asString() + "\033[0m";
 
 			}
 			else {
 
-				offline += i.first + "--";
-				offline += "disconnected\n";
+				cmdResult += i.first + "--\033[1;31;40m";
+				cmdResult += text["state"][2].asString() + "\033[0m";
 
 			}
 
 		}
 
-		if(offline!="")
-			cmdResult += "OffLine\n" + offline;
-
 		delete(state);
 	}
 	else if (cmd == "kick") {
 
-		COUT("Input the player's steamid you want to kick:");
+		COUT(text["kick"][0].asString());
 		string steamid;
 		CIN(steamid);
 		this->_rcon.kick(steamid);
@@ -482,7 +479,7 @@ void ArkHelperServerAPP::solveInput()
 
 			this->_monitorKeep = false;
 
-		cmdResult += "Error CMD! Input \"help\" for more CMD";
+		cmdResult += text["error"][0].asString();
 
 	}
 
