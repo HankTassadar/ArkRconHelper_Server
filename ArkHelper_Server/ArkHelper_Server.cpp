@@ -40,7 +40,7 @@ int main()
     auto app = ArkHelperServerAPP::create();
 	if (app) {
 
-		COUT("\033[1,32,40mInit Succeed!\033[0m");
+		COUT("\n\033[1;32;40mInit Succeed!\033[0m\n");
 		app->run(&g_bExit);
 
 		
@@ -49,7 +49,7 @@ int main()
 	}
 	else {
 
-		COUT("\033[1,31,40Init Failed！See Log File to the detials.\033[0m");
+		COUT("\n\033[1;31;40mInit Failed！See Log File to the detials.\033[0m\n");
 		Sleep(2000);
 
 	}
