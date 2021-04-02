@@ -124,8 +124,6 @@ void ArkHelperServerAPP::inputThread()
 	std::string cmdStr = "";
 	std::string cmdResult = "";
 
-	COUT("/033[1,32,40m");
-	COUT("/033[0m");
 
 
 	while (!exit_flag)

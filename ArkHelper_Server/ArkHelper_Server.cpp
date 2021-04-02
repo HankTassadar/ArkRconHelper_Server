@@ -40,7 +40,7 @@ int main()
     auto app = ArkHelperServerAPP::create();
 	if (app) {
 
-		std::cout << "Init Succeed!" << std::endl;
+		std::cout << "/033[1,32,40mInit Succeed!/033[0m" << std::endl;
 		app->run(&g_bExit);
 
 		
@@ -49,7 +49,7 @@ int main()
 	}
 	else {
 
-		std::cout << "Init Failed！See Log File to the detials." << std::endl;
+		std::cout << "/033[1,31,40Init Failed！See Log File to the detials./033[0m" << std::endl;
 		Sleep(2000);
 
 	}
