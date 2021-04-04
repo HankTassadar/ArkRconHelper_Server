@@ -40,7 +40,7 @@ int main()
     auto app = ArkHelperServerAPP::create();
 	if (app) {
 
-		std::cout << "\n\033[1;32;40mInit Succeed!\033[0m\n" << std::endl;
+		std::cout << "\033[1;32;40mInit Succeed!\033[0m\n" << std::endl;
 		app->run(&g_bExit);
 
 		

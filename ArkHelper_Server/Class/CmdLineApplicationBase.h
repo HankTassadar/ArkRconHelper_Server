@@ -1,63 +1,68 @@
 #pragma once
-#include"ArkRcon.h"
-#include<Windows.h>
-#include<iostream>	
+#include<iostream>
 #include<thread>
-#include<string>
-#include<queue>
 #include<mutex>
-#include<conio.h>
-#include"Log.h"
-#include"TimeClass.h"
-#include"CurlOperate.h"
-#include"ArkUpdate.h"
+#include<Windows.h>
+#include<functional>
+#include<map>
 
-#define COUT(str) std::cout<<MyLog::UTF8toGBK(str)<<std::endl;
-//#define COUT(str) std::cout<<str<<std::endl;
+//windows下接收程序的退出信号，如Ctrl+C等信号
+#ifdef _WIN32
+	bool g_bExit;
+
+	HANDLE g_hEvent = INVALID_HANDLE_VALUE;
+
+	BOOL CALLBACK CosonleHandler(DWORD ev)
+	{
+		BOOL bRet = FALSE;
+		switch (ev)
+		{
+		// the user wants to exit. 
+
+		case CTRL_CLOSE_EVENT:
+		// Handle the CTRL-C signal. 
+		case CTRL_C_EVENT:
+		case CTRL_SHUTDOWN_EVENT:
+		case CTRL_LOGOFF_EVENT:
+		//MessageBox(NULL, L"CTRL+BREAK received!", L"CEvent", MB_OK);
+			g_bExit = true;
+			WaitForSingleObject(g_hEvent, INFINITY);
+			bRet = TRUE;
+			break;
+		default:
+			break;
+	}
+		return bRet;
+}
+#endif // _WIN32
+
+//#define COUT(str) std::cout<<MyLog::UTF8toGBK(str)<<std::endl;
+#define COUT(str) std::cout<<str<<std::endl;
 #define CIN(str) std::cin>>str;
-#define CINUTF8(str) std::cin>>str;str=MyLog::GBKtoUTF8(str);
 
-class ArkHelperServerAPP {
+
+class CmdLineApplicationBase {
 public:
-	static ArkHelperServerAPP* create();
-
-	~ArkHelperServerAPP();
+	CmdLineApplicationBase(std::string);
+	~CmdLineApplicationBase();
 
 public:
-	int run(bool*);
+	void run();
 
-private:
-	enum class Cmd{
-		CHECKARKVERSION,
-		HELP
-	};
-private:
-	//程序命令输入线程
-	void inputThread();
-private:
-	ArkHelperServerAPP();
-
-	//程序初始化
-	bool init();
-
-	//主要工作线程函数，所有的工作都在此线程上完成
-	void mainWork();
-
+public:
 	/**
-	*后台工作内容
+	* 设定主工作线程退出信号，
 	*/
-	void work();
+	void setMainExitFlag() {
+		this->_mainExitMutex.lock();
+		this->_mainExit.first = true;
+		this->_mainExitMutex.unlock();
+	}
 
-	/**
-	* 处理输入命令
-	*/
-	void solveInput();
-
-	/**
-	* 绘制服务器状态UI
-	*/
-	void drawState();
-
+protected:
+	virtual void inputThread();
+	virtual void mainWork();
+	virtual std::string solveInput(const std::string&) = 0;
 private:
 	//退出相关的信号
 
@@ -71,15 +76,6 @@ private:
 	}
 
 	/**
-	* 主工作线程退出信号，
-	*/
-	void setMainExitFlag() {
-		this->_mainExitMutex.lock();
-		this->_mainExit.first = true;
-		this->_mainExitMutex.unlock();
-	}
-
-	/**
 	* 得到主工作线程退出信号
 	*/
 	bool getMainExitFlag() {
@@ -88,6 +84,7 @@ private:
 		this->_mainExitMutex.unlock();
 		return re;
 	}
+
 	/**
 	* 设置主工作线程退出状态，线程退出时调用,并向输入线程发出退出信号
 	*/
@@ -138,7 +135,15 @@ private:
 		this->_inputExitMutex.unlock();
 		return re;
 	}
+
+
 private:
+	//应用层程序名称
+	std::string _appName;
+
+	//帧间隔
+	unsigned long _interval;
+
 	//退出flag指针
 	bool* _exitFlag;
 
@@ -150,38 +155,9 @@ private:
 	//主工作线程退出信号锁
 	std::mutex _mainExitMutex;
 
-
-	//工作循环计数器，用于粗略记时
-	u_int _count;
-	//本对象的指针
-	static ArkHelperServerAPP* impl;
-
 	//输入线程传来的命令队列
 	std::string _cmd;
-	std::mutex _cmdQueueMutex;
-	//输入线程需要接收的结果
-	std::string _cmdResult;
-	std::mutex _cmdResultMutex;
+	std::mutex _cmdMutex;
 
-
-
-	//日志
-	MyLog::Log* _appLog;
-
-	//RconConfig
-	JsonOperate* _rconConfig;
-
-	//RconServer
-	ArkRcon _rcon;
-
-	//方舟更新
-	ArkUpdate _update;
-
-	//运行帧率
-	int _frame;
-
-	bool _inputModeActive;
-	bool _workModeActive;
-	bool _keepWindowOpen;	//保持服务器开启（崩溃自动重启）
-	bool _monitorKeep;		//监视器模式开启标志
+	std::multimap<time_t, std::function<void()>> _workMap;
 };

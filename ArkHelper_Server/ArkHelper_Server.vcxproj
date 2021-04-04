@@ -158,6 +158,7 @@
     <ClCompile Include="Class\ArkRcon.cpp" />
     <ClCompile Include="Class\ArkServer.cpp" />
     <ClCompile Include="Class\ArkUpdate.cpp" />
+    <ClCompile Include="Class\CmdLineApplicationBase.cpp" />
     <ClCompile Include="Class\CurlOperate.cpp" />
     <ClCompile Include="Class\JsonOperate.cpp" />
     <ClCompile Include="Class\Log.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Class\ArkRcon.h" />
     <ClInclude Include="Class\ArkServer.h" />
     <ClInclude Include="Class\ArkUpdate.h" />
+    <ClInclude Include="Class\CmdLineApplicationBase.h" />
     <ClInclude Include="Class\CurlOperate.h" />
     <ClInclude Include="Class\JsonOperate.h" />
     <ClInclude Include="Class\Log.h" />

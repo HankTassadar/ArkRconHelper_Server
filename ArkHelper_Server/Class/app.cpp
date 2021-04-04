@@ -15,11 +15,7 @@ ArkHelperServerAPP* ArkHelperServerAPP::create()
 ArkHelperServerAPP::~ArkHelperServerAPP()
 {
 	//wait for input thread exit 
-	while (true) {
-		this->_exitMutex.lock();
-		auto flag = this->_inputExit;
-		this->_exitMutex.unlock();
-		if (flag)break;
+	while (!this->getInputExitState()) {
 		Sleep(10);
 	}
 	this->impl = nullptr;
@@ -29,7 +25,8 @@ ArkHelperServerAPP::~ArkHelperServerAPP()
 
 ArkHelperServerAPP::ArkHelperServerAPP()
 	:_exitFlag(nullptr)
-	, _inputExit(true)
+	, _inputExit({ false,false })
+	, _mainExit({ false,false })
 	, _count(0)
 	, _cmd("")
 	, _cmdResult("")
@@ -45,9 +42,7 @@ ArkHelperServerAPP::ArkHelperServerAPP()
 
 int ArkHelperServerAPP::run(bool *exit)
 {
-
 	this->_exitFlag = exit;
-	bool exit_flag = false;
 
 	if (this->_inputModeActive) {	//active input mode 开启输入模式
 
@@ -58,13 +53,15 @@ int ArkHelperServerAPP::run(bool *exit)
 	}
 
 	do {
+
 		this->mainWork();
 		
 		//更新退出信号
-		this->_exitMutex.lock();
-		exit_flag = *(this->_exitFlag);
-		this->_exitMutex.unlock();
-	} while (!exit_flag);
+		this->updateMainExit();
+
+	} while (!this->getMainExitState());
+
+	this->setMainExitState();
 
 	return 0;
 }
@@ -119,14 +116,14 @@ bool ArkHelperServerAPP::init()
 
 void ArkHelperServerAPP::inputThread()
 {
-	this->_inputExit = false;
+	this->_inputExit.first = false;
 	bool exit_flag = false;
 	std::string cmdStr = "";
 	std::string cmdResult = "";
 
 
 
-	while (!exit_flag)
+	while (!this->getInputExitFlag())
 	{
 
 		cmdStr.clear();
@@ -137,7 +134,7 @@ void ArkHelperServerAPP::inputThread()
 		this->_cmdQueueMutex.unlock();
 		DEBUGLOG("cmdStr:" + cmdStr);
 
-		while (!exit_flag) {	//等待命令结果并显示
+		while (!this->getInputExitFlag()) {	//等待命令结果并显示
 
 			this->_cmdResultMutex.lock();
 
@@ -153,9 +150,6 @@ void ArkHelperServerAPP::inputThread()
 
 				this->_cmdResultMutex.unlock();
 				Sleep(20);
-				this->_exitMutex.lock();
-				exit_flag = *(this->_exitFlag);
-				this->_exitMutex.unlock();
 
 			}
 
@@ -164,18 +158,12 @@ void ArkHelperServerAPP::inputThread()
 		COUT(cmdResult);
 		DEBUGLOG("cmdResult:" + cmdResult);
 		cmdStr = "";
-
-		//更新退出信号
-		this->_exitMutex.lock();
-		exit_flag = *(this->_exitFlag);
-		this->_exitMutex.unlock();
+		cmdResult = "";
 
 	}
 
 	//发送输入线程退出信号
-	this->_exitMutex.lock();
-	this->_inputExit = true;
-	this->_exitMutex.unlock();
+	this->setInputExitState();
 	DEBUGLOG("inputThread Exit");
 }
 
@@ -285,9 +273,7 @@ void ArkHelperServerAPP::solveInput()
 	}
 	else if (cmd == "exit") {
 
-		this->_exitMutex.lock();
-		*(this->_exitFlag) = true;
-		this->_exitMutex.unlock();
+		this->setMainExitFlag();
 		cmdResult += "EXIT!";
 
 	}

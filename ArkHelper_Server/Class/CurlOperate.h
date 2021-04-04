@@ -2,6 +2,7 @@
 #include<curl/curl.h>
 #include<string>
 #include<sstream>
+#include<vector>
 #ifdef _DEBUG
 	#pragma comment(lib,"libcurld.lib")
 #else
@@ -11,7 +12,11 @@
 
 class CurlOperate {
 public:
-	static std::string get(const std::string& url);
+
+	static std::string get(const std::string& url, const bool httpsUse = false);
+
+	static std::string post(const std::vector<std::pair<std::string, std::string>>& param, const std::string& url, const bool httpsUse = false);
+
 	static size_t recive_data_fun(void* ptr, size_t size, size_t nmemb, void* stream) {
 		if (size * nmemb == 0)return nmemb;
 		size_t strSize = size * nmemb + 1;

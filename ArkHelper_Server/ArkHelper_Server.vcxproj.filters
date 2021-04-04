@@ -47,6 +47,9 @@
     <ClCompile Include="Class\ArkUpdate.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="Class\CmdLineApplicationBase.cpp">
+      <Filter>Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\Log.h">
@@ -75,6 +78,9 @@
     </ClInclude>
     <ClInclude Include="Class\ArkUpdate.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\CmdLineApplicationBase.h">
+      <Filter>Class</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
