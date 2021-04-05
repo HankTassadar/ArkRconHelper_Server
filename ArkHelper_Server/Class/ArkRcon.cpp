@@ -44,7 +44,7 @@ void ArkRcon::clearRecv()
 		DEBUGLOGFRE;
 }
 
-void ArkRcon::broadcast(std::string& data)
+void ArkRcon::broadcast(const std::string& data)
 {
 	DEBUGLOGFIN;
 		for (auto& i : this->_server) {

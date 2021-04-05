@@ -32,7 +32,7 @@ std::string MyLog::GBKtoUTF8(std::string gbkStr) {
 	size_t strLength = gbkStr.length();
 	char* outbuf = (char*)malloc(strLength * 4);
 	char* pBuff = outbuf;
-	memset(outbuf, 0, strLength * 4);
+	::memset(outbuf, 0, strLength * 4);
 
 	size_t outLength = strLength * 4;
 	if (-1 == iconv(iconvH, (const char**)pin, &strLength, &outbuf, &outLength)) {

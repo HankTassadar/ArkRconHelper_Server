@@ -32,7 +32,7 @@ public:
 	/**
 	*send a broadcast to all servers
 	*/
-	void broadcast(std::string&);
+	void broadcast(const std::string&);
 
 	/**
 	*get all online player's game character name

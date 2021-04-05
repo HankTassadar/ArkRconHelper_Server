@@ -504,7 +504,27 @@ void AppArk::every5min()
 void AppArk::every10min()
 {
 	DEBUGLOG("checkUpdate");
-	this->_update.checkUpdate();
+	if (this->_update.checkUpdate() 
+		&& this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()) {
 
-	this->addWork(time(NULL) + 600, [&]() {this->every10min(); });
+		for (unsigned long i = 0; i < 5; i++) {
+
+			this->addWork(time(NULL) + i * (unsigned long)60, [=]() {
+				auto str = this->_text["update"][2].asString() + to_string(5 - i) + this->_text["update"][3].asString();
+				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "broadcast: " + str);
+				this->_rcon.broadcast(str);
+				});
+
+			this->addWork(time(NULL) + 300, [=]() {
+				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
+				this->_rcon.shutConnect();
+				this->_update.arkUpdate();
+				this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
+				});
+		}
+
+	}
+	else {
+		this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
+	}
 }
