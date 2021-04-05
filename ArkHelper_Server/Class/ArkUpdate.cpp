@@ -244,7 +244,7 @@ void ArkUpdate::arkCheckWindows()
 			::memcpy(b, c, tail - head - 1);
 			string servername(b);
 
-			ptr->log(servername);
+			//ptr->log(servername);
 			
 			delete[](b);
 			for (auto& i : ptr->getServer()) {
