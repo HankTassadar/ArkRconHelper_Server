@@ -280,6 +280,7 @@ void AppArk::solveInput(const std::string& cmd)
 
 		this->_monitorKeep = true;
 		COUT("OK!");
+		return;
 
 	}
 
