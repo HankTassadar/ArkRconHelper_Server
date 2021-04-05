@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="ArkHelper_Server.cpp" />
     <ClCompile Include="Class\app.cpp" />
+    <ClCompile Include="Class\AppArk.cpp" />
     <ClCompile Include="Class\ArkRcon.cpp" />
     <ClCompile Include="Class\ArkServer.cpp" />
     <ClCompile Include="Class\ArkUpdate.cpp" />
@@ -167,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\app.h" />
+    <ClInclude Include="Class\AppArk.h" />
     <ClInclude Include="Class\ArkRcon.h" />
     <ClInclude Include="Class\ArkServer.h" />
     <ClInclude Include="Class\ArkUpdate.h" />

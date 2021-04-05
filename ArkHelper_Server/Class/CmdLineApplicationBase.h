@@ -1,4 +1,5 @@
 #pragma once
+
 #include<iostream>
 #include<thread>
 #include<mutex>
@@ -6,44 +7,11 @@
 #include<functional>
 #include<map>
 
-//windows下接收程序的退出信号，如Ctrl+C等信号
-#ifdef _WIN32
-	bool g_bExit;
-
-	HANDLE g_hEvent = INVALID_HANDLE_VALUE;
-
-	BOOL CALLBACK CosonleHandler(DWORD ev)
-	{
-		BOOL bRet = FALSE;
-		switch (ev)
-		{
-		// the user wants to exit. 
-
-		case CTRL_CLOSE_EVENT:
-		// Handle the CTRL-C signal. 
-		case CTRL_C_EVENT:
-		case CTRL_SHUTDOWN_EVENT:
-		case CTRL_LOGOFF_EVENT:
-		//MessageBox(NULL, L"CTRL+BREAK received!", L"CEvent", MB_OK);
-			g_bExit = true;
-			WaitForSingleObject(g_hEvent, INFINITY);
-			bRet = TRUE;
-			break;
-		default:
-			break;
-	}
-		return bRet;
-}
-#endif // _WIN32
-
-//#define COUT(str) std::cout<<MyLog::UTF8toGBK(str)<<std::endl;
-#define COUT(str) std::cout<<str<<std::endl;
-#define CIN(str) std::cin>>str;
 
 
 class CmdLineApplicationBase {
 public:
-	CmdLineApplicationBase(std::string);
+	CmdLineApplicationBase(std::string,unsigned long);
 	~CmdLineApplicationBase();
 
 public:
@@ -55,14 +23,20 @@ public:
 	*/
 	void setMainExitFlag() {
 		this->_mainExitMutex.lock();
-		this->_mainExit.first = true;
+		*(this->_exitFlag) = true;
 		this->_mainExitMutex.unlock();
 	}
 
-protected:
+	/**
+	* 向工作线程发送一个工作任务，{time_t,function<void()>}
+	*/
+	void addWork(time_t,std::function<void()>);
+private:
 	virtual void inputThread();
 	virtual void mainWork();
-	virtual std::string solveInput(const std::string&) = 0;
+	virtual void clearCmd();
+protected:
+	virtual void solveInput(const std::string& cmd) { };	//must be override in child class
 private:
 	//退出相关的信号
 
@@ -93,7 +67,7 @@ private:
 		this->_mainExit.second = true;
 		this->_mainExitMutex.unlock();
 		this->_inputExitMutex.lock();
-		this->_mainExit.first = true;
+		this->_inputExit.first = true;
 		this->_inputExitMutex.unlock();
 	}
 
@@ -159,5 +133,8 @@ private:
 	std::string _cmd;
 	std::mutex _cmdMutex;
 
-	std::multimap<time_t, std::function<void()>> _workMap;
+	std::multimap<time_t, std::function<void ()>> _workMap;
 };
+
+
+
