@@ -191,6 +191,7 @@ bool ArkUpdate::closeArkWindow(HWND hwnd)
 
 void ArkUpdate::arkRestart()
 {
+	DEBUGLOGFIN;
 	//枚举顶层窗口,得到所有方舟窗口的窗口句柄
 	this->arkCheckWindows();
 	auto root = this->_arkJson->getRoot();
@@ -210,12 +211,12 @@ void ArkUpdate::arkRestart()
 		}
 
 	}
-
+	DEBUGLOGFRE;
 }
 
 void ArkUpdate::arkCheckWindows()
 {
-
+	DEBUGLOGFIN;
 	bool reflag = true;
 
 	for (auto& i : this->_arkServerWindow) {
@@ -286,6 +287,7 @@ void ArkUpdate::arkCheckWindows()
 		delete[](a);
 		return TRUE; 
 		}, (LPARAM)(this));
+	DEBUGLOGFRE;
 }
 
 
