@@ -188,7 +188,7 @@
     }
   },
   "Language": {
-    "Language": "en",
+    "Language": "ch",
     "ch": {
       "help": [
         "showonline--显示所有的在线玩家\n",
@@ -206,7 +206,7 @@
         "monitor--启动监控模式，实时监控服务器玩家在线情况，输入任何错误命令都将退出此模式，如输入asd后回车\n",
         "exit--退出本程序，或者使用Ctrl+C也可退出本程序，尽量不要通过窗口右上角的红叉来退出\n"
       ],
-      "showline": [
+      "showonline": [
         "是否查询玩家的游戏内角色名字，如果是输入y，否输入n，此功能需要ExtendRcon插件支持，没有此插件请输入n"
       ],
       "broadcast": [
@@ -223,12 +223,14 @@
       ],
       "update": [
         "--Rcon连接已经全部关闭",
-        "--更新完成，如果更新前手动输入了shutdown命令关闭的服务器，请发送restartall进行重启"
+        "--更新完成，如果更新前手动输入了shutdown命令关闭的服务器，请发送restartall进行重启",
+        "服务器将于 ",
+        " 分钟后更新并重启，请及时下线"
       ],
       "state": [
         "服务器在线状态  --  ",
-        "在线\n",
-        "离线\n"
+        "在线",
+        "离线"
       ],
       "kick": [
         "输入你想踢出服务器的玩家的steamid："
@@ -271,12 +273,14 @@
       ],
       "update": [
         "--Rcon connections have beed all shutdown!",
-        "--Update Finished!"
+        "--Update Finished!",
+        "server will update in ",
+        " minute,please be offline before"
       ],
       "state": [
         "Servers Online ",
-        "connected\n",
-        "disconnected\n"
+        "connected",
+        "disconnected"
       ],
       "kick": [
         "Input the player's steamid you want to kick:"
