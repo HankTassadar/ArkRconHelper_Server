@@ -205,7 +205,15 @@ void ArkUpdate::arkRestart()
 				+ " " + i.map + "?listen?Port=" + i.listenPort + "?QueryPort=" + i.queryPort + "?RconPort=" + i.rconPort + "?" 
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
 			DEBUGLOG(startCmd);
-			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
+			try
+			{
+				this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
+			}
+			catch (const std::exception& e)
+			{
+				DEBUGLOG(e.what());
+			}
+			
 			DEBUGLOG("updateLog");
 			::system(startCmd.c_str());
 			DEBUGLOG("start over");
