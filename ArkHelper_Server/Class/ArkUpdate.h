@@ -2,6 +2,7 @@
 #include<Windows.h>
 #include<string>
 #include<vector>
+#include<set>
 #include<thread>
 #include"CurlOperate.h"
 #include"Log.h"
@@ -19,6 +20,7 @@ private:
 		std::string version;	//窗口的服务器版本号
 		std::string name;	//服务器名称
 		std::string path;	//服务器安装路径
+		std::set<std::string> mods;	
 		std::string map;
 		std::string listenPort;	
 		std::string queryPort;
@@ -26,6 +28,11 @@ private:
 	};
 
 public:
+	/**
+	* shutdown the servers which mods has just been update
+	*/
+	void shutdownAndModsUpdate(const std::vector<std::string>&);
+
 	/**
 	*check if any server need to update
 	*return true if server need update

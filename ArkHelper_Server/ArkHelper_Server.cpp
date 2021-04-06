@@ -3,12 +3,10 @@
 
 int main()
 {
-	//AppArk app;
+	AppArk app;
 
-	//app.run();
-	ArkModsUpdate modsupdate;
-	modsupdate.checkUpdate();
-	Sleep(1);
+	app.run();
+
 	return 1;
 }
 

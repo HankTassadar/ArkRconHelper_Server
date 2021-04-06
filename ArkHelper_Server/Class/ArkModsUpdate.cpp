@@ -125,7 +125,7 @@ std::vector<std::string> ArkModsUpdate::shutdownUpdateServer()
 	writefile << dataStr;
 	writefile.close();
 
-	vector<string> updatemodlist;
+	std::vector<std::string> updatemodlist;
 
 	for (auto& i : this->_mods) {
 		if (i.second.first != i.second.second)
@@ -133,6 +133,13 @@ std::vector<std::string> ArkModsUpdate::shutdownUpdateServer()
 	}
 
 	return updatemodlist;
+}
+
+void ArkModsUpdate::setUpdateDown()
+{
+	for (auto& i : this->_mods) {
+		i.second.second = i.second.first;
+	}
 }
 
 bool ArkModsUpdate::init()

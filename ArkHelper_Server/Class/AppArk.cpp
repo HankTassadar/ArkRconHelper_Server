@@ -535,6 +535,7 @@ void AppArk::every10min_1()
 {
 	DEBUGLOG("checkModsUpdate");
 	if (this->_modupdate.checkUpdate()) {
+		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update");
 		this->_modupdate.updateServerRun();
 		this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
 	}
@@ -546,7 +547,10 @@ void AppArk::every10min_1()
 void AppArk::modsServerConnect()
 {
 	if (this->_modupdate.connectServer()) {
+		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods update finished");
 		auto modid = this->_modupdate.shutdownUpdateServer();
+		this->_update.shutdownAndModsUpdate(modid);
+		this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
 	}
 	else {
 		this->addWork(time(NULL) + 10, [&]() {this->modsServerConnect(); });

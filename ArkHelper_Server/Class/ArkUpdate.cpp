@@ -26,6 +26,8 @@ void ArkUpdate::init()
 		server.hwnd = NULL;
 		server.listenPort = root["Servers"][i]["Port"].asString();
 		server.map = root["Servers"][i]["map"].asString();
+		for (auto& j : root["Servers"][i]["mods"])
+			server.mods.insert(j.asString());
 		server.name = i;
 		server.path = root["Servers"][i]["path"].asString();
 		server.queryPort = root["Servers"][i]["QueryPort"].asString();
@@ -130,6 +132,31 @@ std::string ArkUpdate::readVersion(const std::string &installpath)
 	file.close();
 	return version;
 };
+
+void ArkUpdate::shutdownAndModsUpdate(const std::vector<std::string>& modid)
+{
+	map<string, HWND> modupdate;
+
+	for (auto& i : this->_arkServerWindow) {
+
+		for (auto& j : modid) {
+
+			auto iter = i.mods.find(j);
+
+			if (iter != i.mods.end()) {
+
+				modupdate[i.name] = i.hwnd;
+				break;
+
+			}
+
+		}
+
+	}
+
+	for (auto& i : modupdate)
+		this->closeArkWindow(i.second);
+}
 
 bool ArkUpdate::checkUpdate()
 {

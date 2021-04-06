@@ -30,6 +30,11 @@ public:
 	* retrun the updated mods id
 	*/
 	std::vector<std::string> shutdownUpdateServer();
+	
+	/**
+	* call this function if just update finished and the server which mods updated reboot 
+	*/
+	void setUpdateDown();
 
 	/**
 	* set server window hwnd,do not use this function out of class
