@@ -212,6 +212,7 @@ void ArkUpdate::arkRestart()
 			catch (const std::exception& e)
 			{
 				DEBUGLOG(e.what());
+				abort();
 			}
 			
 			DEBUGLOG("updateLog");
