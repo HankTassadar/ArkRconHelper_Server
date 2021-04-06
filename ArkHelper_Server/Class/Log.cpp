@@ -26,11 +26,12 @@ void MyLog::log(std::string loginfo) {
 }
 
 std::string MyLog::GBKtoUTF8(std::string gbkStr) {
-	iconv_t iconvH = iconv_open("UTF-8", "GB2312");
+	iconv_t iconvH = iconv_open("UTF-8", "gb18030");
 	const char* strChar = gbkStr.c_str();
 	const char** pin = &strChar;
 	size_t strLength = gbkStr.length();
 	char* outbuf = (char*)malloc(strLength * 4);
+	if (outbuf = nullptr)return"failed";
 	char* pBuff = outbuf;
 	::memset(outbuf, 0, strLength * 4);
 
@@ -38,7 +39,7 @@ std::string MyLog::GBKtoUTF8(std::string gbkStr) {
 	if (-1 == iconv(iconvH, (const char**)pin, &strLength, &outbuf, &outLength)) {
 		free(pBuff);
 		iconv_close(iconvH);
-		return "´íÎó";
+		return "failed";
 	}
 	gbkStr = pBuff;
 	iconv_close(iconvH);

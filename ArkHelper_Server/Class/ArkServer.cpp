@@ -23,6 +23,11 @@ bool ArkServer::init(Rcon_addr addr)
 
 }
 
+void ArkServer::serAddr(Rcon_addr addr)
+{
+	this->_rconAddr = addr;
+}
+
 bool ArkServer::init()
 {
 	DEBUGLOGFIN;
@@ -381,7 +386,7 @@ void ArkServer::updateGameName()
 	DEBUGLOGFRE;
 }
 
-void ArkServer::broadcast(std::string &data)
+void ArkServer::broadcast(const std::string &data)
 {
 	DEBUGLOGFIN;
 	if (!this->_connected) {

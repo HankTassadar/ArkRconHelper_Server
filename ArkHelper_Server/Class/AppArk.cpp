@@ -211,6 +211,7 @@ void AppArk::solveInput(const std::string& cmd)
 
 		this->_rcon.sendCmdAndWiatForItRecv("arkshop.reload");
 		COUT("OK!");
+		return;
 
 	}
 
@@ -348,6 +349,7 @@ void AppArk::addWorkFunc()
 	this->addWork(time(NULL), [&]() {this->every1min(); });
 	this->addWork(time(NULL), [&]() {this->every5min(); });
 	this->addWork(time(NULL), [&]() {this->every10min(); });
+	this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
 }
 
 void AppArk::drawState()
@@ -526,5 +528,27 @@ void AppArk::every10min()
 	}
 	else {
 		this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
+	}
+}
+
+void AppArk::every10min_1()
+{
+	DEBUGLOG("checkModsUpdate");
+	if (this->_modupdate.checkUpdate()) {
+		this->_modupdate.updateServerRun();
+		this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
+	}
+	else {
+		this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
+	}
+}
+
+void AppArk::modsServerConnect()
+{
+	if (this->_modupdate.connectServer()) {
+		auto modid = this->_modupdate.shutdownUpdateServer();
+	}
+	else {
+		this->addWork(time(NULL) + 10, [&]() {this->modsServerConnect(); });
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include"ArkRcon.h"
 #include"ArkUpdate.h"
+#include"ArkModsUpdate.h"
 #include"CmdLineApplicationBase.h"
 
 
@@ -29,6 +30,9 @@ private:
 	void every1min();
 	void every5min();
 	void every10min();
+	void every10min_1();
+	void modsServerConnect();
+
 private:
 	//日志
 	MyLog::Log* _appLog;
@@ -44,6 +48,9 @@ private:
 
 	//方舟更新
 	ArkUpdate _update;
+
+	//mods更新
+	ArkModsUpdate _modupdate;
 
 	bool _inputModeActive;
 	bool _workModeActive;

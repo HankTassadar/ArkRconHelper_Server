@@ -59,6 +59,8 @@ public:
 public:
 	bool init(Rcon_addr addr);
 
+	void serAddr(Rcon_addr);
+
 	bool init();
 
 	bool auth();
@@ -88,7 +90,7 @@ public:
 	/**
 	*发送公告,字符串编码为UTF-8
 	*/
-	void broadcast(std::string&);
+	void broadcast(const std::string&);
 
 	/**
 	*server save

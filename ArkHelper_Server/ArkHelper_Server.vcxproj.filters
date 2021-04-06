@@ -35,9 +35,6 @@
     <ClCompile Include="Class\JsonOperate.cpp">
       <Filter>Class</Filter>
     </ClCompile>
-    <ClCompile Include="Class\app.cpp">
-      <Filter>App</Filter>
-    </ClCompile>
     <ClCompile Include="Class\ArkRcon.cpp">
       <Filter>App</Filter>
     </ClCompile>
@@ -51,6 +48,9 @@
       <Filter>Class</Filter>
     </ClCompile>
     <ClCompile Include="Class\AppArk.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\ArkModsUpdate.cpp">
       <Filter>App</Filter>
     </ClCompile>
   </ItemGroup>
@@ -70,9 +70,6 @@
     <ClInclude Include="Class\JsonOperate.h">
       <Filter>Class</Filter>
     </ClInclude>
-    <ClInclude Include="Class\app.h">
-      <Filter>App</Filter>
-    </ClInclude>
     <ClInclude Include="Class\ArkRcon.h">
       <Filter>App</Filter>
     </ClInclude>
@@ -86,6 +83,9 @@
       <Filter>Class</Filter>
     </ClInclude>
     <ClInclude Include="Class\AppArk.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\ArkModsUpdate.h">
       <Filter>App</Filter>
     </ClInclude>
   </ItemGroup>
