@@ -206,7 +206,9 @@ void ArkUpdate::arkRestart()
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
 			DEBUGLOG(startCmd);
 			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
+			DEBUGLOG("updateLog");
 			::system(startCmd.c_str());
+			DEBUGLOG("start over");
 			Sleep(3000);
 
 		}
