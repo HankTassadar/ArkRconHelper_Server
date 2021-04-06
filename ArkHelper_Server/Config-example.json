@@ -1,16 +1,50 @@
 ﻿{
   "Mode": {
-    "InputMode": false,
-    "WorkMode": true
+    "InputMode": true,
+    "WorkMode": true,
+    "AutoUpdateServer": true,
+    "AutoUpdateMods": true
   },
-  "IP": "192.168.1.7",
+  "IP": "127.0.0.1",
   "steamcmdPath": "E:/steamcmd/steamcmd.exe",
   "startCmdAdd": "MaxPlayers=70?ServerAutoForceRespawnWildDinosInterval=86400?AllowCrateSpawnsOnTopOfStructures=True -AutoDestroyStructures -EnableIdlePlayerKick -clusterid=891223834 -ClusterDirOverride=\"E:\\steamcmd\" -NoTransferFromFiltering -UseBattlEye -servergamelog -usecache -nomemorybias -StasisKeepControllers -NoHangDetection -nosteamclient -game -server -log",
+  "ModsUpdateServer": {
+    "ServerName": "ark_modsupdate",
+    "ServerPath": "E:/ark_modsupdate",
+    "Mods": [
+      "731604991",
+      "1229631593",
+      "849985437",
+      "751991809",
+      "889745138",
+      "1404697612",
+      "1090809604",
+      "1734595558",
+      "710880648",
+      "833379388",
+      "2006790434",
+      "1840936777",
+      "839162288",
+      "899987403"
+    ],
+    "Port": 16697,
+    "QueryPort": 16698,
+    "RconPort": 16699,
+    "AdminPass": "123123"
+  },
   "Servers": {
     "pveark_aberration": {
       "name": "PVE畸变",
       "path": "E:/pveark_aberration",
       "map": "Aberration_P",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16611,
       "QueryPort": 16612,
       "RconPort": 16613,
@@ -20,6 +54,14 @@
       "name": "PVE水晶岛",
       "path": "E:/pveark_crystal_isles",
       "map": "CrystalIsles",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16621,
       "QueryPort": 16622,
       "RconPort": 16623,
@@ -29,6 +71,14 @@
       "name": "PVE灭绝",
       "path": "E:/pveark_extinction",
       "map": "Extinction",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16631,
       "QueryPort": 16632,
       "RconPort": 16633,
@@ -38,6 +88,14 @@
       "name": "PVE创世纪",
       "path": "E:/pveark_genesis",
       "map": " Genesis",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16641,
       "QueryPort": 16642,
       "RconPort": 16643,
@@ -47,6 +105,14 @@
       "name": "PVE仙境",
       "path": "E:/pveark_ragnarok",
       "map": "Ragnarok",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16651,
       "QueryPort": 16652,
       "RconPort": 16653,
@@ -56,6 +122,14 @@
       "name": "PVE焦土",
       "path": "E:/pveark_scorched_earth",
       "map": "ScorchedEarth_P",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16661,
       "QueryPort": 16662,
       "RconPort": 16663,
@@ -65,6 +139,14 @@
       "name": "PVE中心岛",
       "path": "E:/pveark_the_center",
       "map": "TheCenter",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16671,
       "QueryPort": 16672,
       "RconPort": 16673,
@@ -74,6 +156,14 @@
       "name": "PVE孤岛",
       "path": "E:/pveark_the_island",
       "map": "TheIsland",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16681,
       "QueryPort": 16682,
       "RconPort": 16683,
@@ -83,6 +173,14 @@
       "name": "PVE瓦尔盖罗",
       "path": "E:/pveark_valguero",
       "map": "Valguero_P",
+      "mods": [
+        "731604991",
+        "1229631593",
+        "849985437",
+        "751991809",
+        "889745138",
+        "1404697612"
+      ],
       "Port": 16691,
       "QueryPort": 16692,
       "RconPort": 16693,
