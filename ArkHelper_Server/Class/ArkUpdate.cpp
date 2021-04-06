@@ -194,8 +194,9 @@ void ArkUpdate::arkRestart()
 	DEBUGLOGFIN;
 	//枚举顶层窗口,得到所有方舟窗口的窗口句柄
 	this->arkCheckWindows();
+	DEBUGLOG("getRoot");
 	auto root = this->_arkJson->getRoot();
-
+	DEBUGLOG("begin start server");
 	for (auto &i : this->_arkServerWindow) {
 
 		if (i.hwnd == NULL) {	//start any server which is not started
@@ -203,7 +204,7 @@ void ArkUpdate::arkRestart()
 			string startCmd = "start " + i.path + "/ShooterGame/Binaries/Win64/ShooterGameServer.exe" 
 				+ " " + i.map + "?listen?Port=" + i.listenPort + "?QueryPort=" + i.queryPort + "?RconPort=" + i.rconPort + "?" 
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
-
+			DEBUGLOG(startCmd);
 			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
 			::system(startCmd.c_str());
 			Sleep(3000);
