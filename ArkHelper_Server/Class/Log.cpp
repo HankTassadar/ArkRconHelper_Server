@@ -31,7 +31,6 @@ std::string MyLog::GBKtoUTF8(std::string gbkStr) {
 	const char** pin = &strChar;
 	size_t strLength = gbkStr.length();
 	char* outbuf = (char*)malloc(strLength * 4);
-	if (outbuf = nullptr)return"failed";
 	char* pBuff = outbuf;
 	::memset(outbuf, 0, strLength * 4);
 
@@ -56,7 +55,7 @@ Log* Log::createLog(std::string logname) {
 }
 
 void Log::logoutGBK(const std::string &loginfo) {
-	this->logoutUTF8(GBKtoUTF8(loginfo));
+		this->logoutUTF8(GBKtoUTF8(loginfo));
 }
 
 std::string MyLog::UTF8toGBK(std::string utf8)
