@@ -20,6 +20,8 @@ public:
 		YEARDAY,
 	};
 public:
+	TimeClass(time_t);
+
 	TimeClass() { if (!(this->init())) { this->t = 0; memset(&(this->t_tm), 0, sizeof(this->t_tm)); }; }
 	/**
 	*按输入参数的格式输出指定的时间字符串

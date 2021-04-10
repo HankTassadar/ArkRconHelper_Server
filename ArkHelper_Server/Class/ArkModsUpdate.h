@@ -37,6 +37,11 @@ public:
 	void setUpdateDown();
 
 	/**
+	* get all mods last update time
+	*/
+	std::vector<std::pair<std::string, time_t>> getUpdateTime();
+
+	/**
 	* set server window hwnd,do not use this function out of class
 	*/
 	void setHwnd(HWND hwnd) {

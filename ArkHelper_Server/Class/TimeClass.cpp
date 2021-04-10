@@ -3,6 +3,16 @@
 using namespace std;
 
 
+TimeClass::TimeClass(time_t time_in)
+	:t(time_in)
+{
+#if defined __linux__
+	localtime_r(&(this->t), &(this->t_tm));
+#elif defined _WIN32||_WIN64
+	localtime_s(&(this->t_tm), &(this->t));
+#endif // _WIN
+}
+
 std::string TimeClass::TimeNow()
 {
 	string re="";

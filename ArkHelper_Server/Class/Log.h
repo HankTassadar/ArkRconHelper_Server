@@ -9,7 +9,12 @@
 #include<iconv.h>
 #include<cstdlib>
 #include"TimeClass.h"
+
+#ifdef _WIN32
 #pragma comment(lib,"iconv.lib")
+#endif // _WIN32
+
+
 
 namespace MyLog {
 

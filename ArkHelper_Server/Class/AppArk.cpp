@@ -285,6 +285,19 @@ void AppArk::solveInput(const std::string& cmd)
 
 	}
 
+	if (cmd == "modupdate") {
+
+		auto updatetime = this->_modupdate.getUpdateTime();
+		string str;
+		for (auto& i : updatetime) {
+			str += i.first + ": " + TimeClass(i.second).TimeNow() + "\n";
+		}
+		COUT(str);
+		COUT("OK!");
+		return;
+
+	}
+
 	this->_monitorKeep = false;//监控模式下退出监控模式
 
 	COUT(this->_text["error"][0].asString());
@@ -465,31 +478,36 @@ void AppArk::every1sec()
 	if (this->_keepWindowOpen) {
 
 		DEBUGLOG("restartAll");
+		RELEASELOG("restartAll");
 		this->_update.arkRestart();
 
 	}
 
 	DEBUGLOG("clearRecv");
+	RELEASELOG("clearRecv");
 	this->_rcon.clearRecv();
+	RELEASELOG("cheakCrashed");
 	DEBUGLOG("checkCrashed");
 	this->_update.checkCrashed();
-
+	RELEASELOG("every1sec-over");
 	this->addWork(time(NULL) + 1, [&]() {this->every1sec(); });
 }
 
 void AppArk::every5sec()
 {
+	RELEASELOG("updateplayerslist");
 	DEBUGLOG("updateplayerlist");
 	this->_rcon.updateplayerlist();
-
+	RELEASELOG("every5sec-over");
 	this->addWork(time(NULL) + 5, [&]() {this->every5sec(); });
 }
 
 void AppArk::every10sec()
 {
+	RELEASELOG("reconnect");
 	DEBUGLOG("reconnect");
 	this->_rcon.reconnect();
-
+	RELEASELOG("every10sec-over");
 	this->addWork(time(NULL) + 10, [&]() {this->every10sec(); });
 }
 
@@ -505,6 +523,7 @@ void AppArk::every5min()
 
 void AppArk::every10min()
 {
+	RELEASELOG("checkUpdate");
 	DEBUGLOG("checkUpdate");
 	if (this->_update.checkUpdate() 
 		&& this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()) {
@@ -529,12 +548,15 @@ void AppArk::every10min()
 	else {
 		this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
 	}
+	RELEASELOG("every10min-over");
 }
 
 void AppArk::every10min_1()
 {
+	RELEASELOG("checkModeUpdate");
 	DEBUGLOG("checkModsUpdate");
-	if (this->_modupdate.checkUpdate()) {
+	if (this->_modupdate.checkUpdate()
+		&&this->_rconConfig->getRoot()["Mode"]["AutoUpdateMods"].asBool()) {
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update");
 		this->_modupdate.updateServerRun();
 		this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
@@ -542,10 +564,12 @@ void AppArk::every10min_1()
 	else {
 		this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
 	}
+	RELEASELOG("every10min_1-over");
 }
 
 void AppArk::modsServerConnect()
 {
+	RELEASELOG("modsServerConnect");
 	if (this->_modupdate.connectServer()) {
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods update finished");
 		auto modid = this->_modupdate.shutdownUpdateServer();
@@ -555,4 +579,5 @@ void AppArk::modsServerConnect()
 	else {
 		this->addWork(time(NULL) + 10, [&]() {this->modsServerConnect(); });
 	}
+	RELEASELOG("modsServerConnect-over");
 }

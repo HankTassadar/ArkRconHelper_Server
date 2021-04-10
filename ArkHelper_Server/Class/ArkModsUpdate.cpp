@@ -142,6 +142,19 @@ void ArkModsUpdate::setUpdateDown()
 	}
 }
 
+std::vector<std::pair<std::string, time_t>> ArkModsUpdate::getUpdateTime()
+{
+
+	vector<pair<string, time_t>> re;
+	for (auto& i : this->_mods) {
+
+		re.push_back({ i.first,i.second.second });
+
+	}
+
+	return re;
+}
+
 bool ArkModsUpdate::init()
 {
 	auto config = new JsonOperate();
