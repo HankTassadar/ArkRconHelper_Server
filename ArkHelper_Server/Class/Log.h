@@ -71,7 +71,7 @@ static MyLog::Log* releaselog = MyLog::Log::createLog("AppLog/ReleaseLog");
 static std::string releaselogpos = "";
 static uint32_t releaselogcount = 0;
 #define RELEASELOG(str)															\
-	if(releaselogcount==200){releaselog->clear();releaselogcount=0;}			\
+	if(releaselogcount++==500){releaselog->clear();releaselogcount=0;}			\
 	releaselogpos=__FILE__;														\
 	releaselogpos+="--";														\
 	releaselogpos += std::to_string(__LINE__);									\
