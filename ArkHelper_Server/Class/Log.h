@@ -23,9 +23,13 @@ namespace MyLog {
 	public:
 		static Log* createLog(std::string);
 
+		void setLogName(const std::string&);
+
 		void logoutGBK(const std::string&);
 
 		void logoutUTF8(const std::string&);
+
+		void clear();
 		~Log();
 
 	private:
@@ -34,15 +38,17 @@ namespace MyLog {
 
 
 	private:
+		std::string logname;
 		std::ofstream file;
 		std::mutex _myMutex;
 	};
 
 };
 
+
+#ifdef _DEBUG
 static MyLog::Log* debuglog = MyLog::Log::createLog("AppLog/DebugLog");
 static std::string debuglogfilepos = "";
-#ifdef _DEBUG
 #define DEBUGLOG(str)																\
 	debuglogfilepos=__FILE__;														\
 	debuglogfilepos+="--";															\
@@ -50,12 +56,23 @@ static std::string debuglogfilepos = "";
 	debuglogfilepos += "--";														\
 	debuglogfilepos += __FUNCTION__;												\
 	debuglog->logoutUTF8(TimeClass().TimeNow() + "--" + str + "--" + debuglogfilepos);
-
+#define RELEASELOG(str)	
 
 #endif // _DEBUG
 
 #ifndef _DEBUG
 #define DEBUGLOG(str)
+static MyLog::Log* releaselog = MyLog::Log::createLog("AppLog/ReleaseLog");
+static std::string releaselogpos = "";
+static uint32_t releaselogcount = 0;
+#define RELEASELOG(str)															\
+	if(releaselogcount==200){releaselog->clear();releaselogcount=0;}			\
+	releaselogpos=__FILE__;														\
+	releaselogpos+="--";														\
+	releaselogpos += std::to_string(__LINE__);									\
+	releaselogpos += "--";														\
+	releaselogpos += __FUNCTION__;												\
+	releaselog->logoutUTF8(TimeClass().TimeNow() + "--" + str + "--" + releaselogpos);
 #endif // !_DEBUG
 
 #define DEBUGLOGFIN DEBUGLOG("Function in")

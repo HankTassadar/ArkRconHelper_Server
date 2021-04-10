@@ -7,7 +7,7 @@ std::string TimeClass::TimeNow()
 {
 	string re="";
 	re += to_string(1900 + this->t_tm.tm_year);
-	re += "/" + to_string(this->t_tm.tm_mon);
+	re += "/" + to_string(this->t_tm.tm_mon + 1);
 	re += "/" + to_string(this->t_tm.tm_mday);
 	re += "-" + to_string(this->t_tm.tm_hour);
 	re += ":" + to_string(this->t_tm.tm_min);
