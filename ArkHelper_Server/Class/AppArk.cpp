@@ -1,4 +1,5 @@
 #include"AppArk.h"
+#include<algorithm>
 
 AppArk::AppArk()
 	: CmdLineApplicationBase("# ark->", 20)
@@ -289,6 +290,10 @@ void AppArk::solveInput(const std::string& cmd)
 
 		auto updatetime = this->_modupdate.getUpdateTime();
 		string str;
+		sort(updatetime.begin(), updatetime.end()
+			, [&](const pair<string, time_t>& param1, const pair<string, time_t>& param2)->bool {
+				return param1.second > param2.second;
+			});
 		for (auto& i : updatetime) {
 			str += i.first + ": " + TimeClass(i.second).TimeNow() + "\n";
 		}
