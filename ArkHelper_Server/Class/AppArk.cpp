@@ -564,6 +564,7 @@ void AppArk::every10min_1()
 		&&this->_rconConfig->getRoot()["Mode"]["AutoUpdateMods"].asBool()) {
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update");
 		this->_modupdate.updateServerRun();
+		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update over,start to connect");
 		this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
 	}
 	else {

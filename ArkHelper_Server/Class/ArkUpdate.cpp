@@ -41,7 +41,7 @@ void ArkUpdate::init()
 bool ArkUpdate::checkCrashed()
 {
 	DEBUGLOG("Function in");
-	auto hwnd = FindWindowA(NULL, "The UE4-ShooterGame Game has crashed and will close");
+	auto hwnd = FindWindowA(NULL, "The UE4-ShooterGame Server has crashed and will close");
 	if (!hwnd) {
 		DEBUGLOG("Function return");
 		return false;
