@@ -366,12 +366,6 @@ void ArkServer::updateGameName()
 
 	}
 
-	if (players.size() == 0) {
-
-		DEBUGLOGFRE; return;
-
-	}
-
 	for (auto &i : players) {
 
 		this->sendData("getplayername " + i.steamId, SERVERDATA_EXECCOMMAND);
@@ -426,12 +420,10 @@ ArkServer::packet ArkServer::sendCmdAndWiatForRecv(const std::string& data)
 void ArkServer::shutConnect()
 {
 	DEBUGLOGFIN;
-	if (!this->_connected) {
-		DEBUGLOGFRE;
-		return;
+	if (this->_connected) {
+		closesocket(this->_client);
 	}
 	DEBUGLOG(this->getServerName() + " shutConnect");
-	closesocket(this->_client);
 	this->_id = 1;
 	this->_player.clear();
 	this->_connected = false;
@@ -453,7 +445,10 @@ ArkServer::packet ArkServer::waitForRecvData()
 			LOG(this->getServerName() + "--lost connection!");
 			break;
 		}
-		if (count == 50 * 5)break;	//5秒还没接收到该包视为失败，直接跳出
+		if (count == 50 * 5) {
+			this->shutConnect();
+			break;	//5秒还没接收到该包视为失败，关闭连接直接跳出
+		}
 		count++;
 		DEBUGLOG("id recv:" + to_string(re.id));
 	}
