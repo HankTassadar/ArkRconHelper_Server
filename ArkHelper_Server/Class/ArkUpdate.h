@@ -89,7 +89,7 @@ private:
 	* read ark server version from installpath/version.txt
 	* 读取方舟服务器的版本号，参数为config中的path(服务器安装路径)
 	*/
-	std::string readVersion(const std::string &installpath);
+	std::string readVersion(const HWND& hwnd);
 
 	/**
 	* use handle to close an ark server window

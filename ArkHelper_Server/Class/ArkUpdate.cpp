@@ -32,7 +32,7 @@ void ArkUpdate::init()
 		server.path = root["Servers"][i]["path"].asString();
 		server.queryPort = root["Servers"][i]["QueryPort"].asString();
 		server.rconPort = root["Servers"][i]["RconPort"].asString();
-		server.version = this->readVersion(server.path);
+		server.version = "";
 		this->_arkServerWindow.push_back(server);
 	}
 	this->arkCheckWindows();
@@ -67,8 +67,8 @@ void ArkUpdate::arkUpdate()
 {
 	DEBUGLOG("Function in");
 	for (auto &i : this->_arkServerWindow) {
-		i.version = this->readVersion(i.path);
-		if (i.version != this->_netVersion) {
+		i.version = this->readVersion(i.hwnd);
+		if (i.version != "" && i.version != this->_netVersion) {
 			//close window
 			this->_updateLog->logoutUTF8(TimeClass::TimeClass().TimeNow() + "--" + "ShutDown" + "--" + i.name);
 			this->closeArkWindow(i.hwnd);
@@ -77,15 +77,10 @@ void ArkUpdate::arkUpdate()
 			string updateCmd = _arkJson->getRoot()["steamcmdPath"].asString() 
 				+ " +login anonymous" + " +force_install_dir " + i.path + " +app_update 376030 validate +quit";
 
-			while(i.version != this->_netVersion){
-				//update server
-				this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "StartUpdate" + "--" + i.path);
-				system(updateCmd.c_str());
-				this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "UpdateFinish" + "--" + i.path);
+			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "StartUpdate" + "--" + i.path);
+			system(updateCmd.c_str());
+			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "UpdateFinish" + "--" + i.path);
 
-				//update version number
-				i.version = this->readVersion(i.path);
-			}
 		}
 	}
 	DEBUGLOG("Function return");
@@ -118,18 +113,20 @@ void ArkUpdate::updateVersionFromUrl()
 	DEBUGLOGFRE;
 }
 
-std::string ArkUpdate::readVersion(const std::string &installpath)
+std::string ArkUpdate::readVersion(const HWND& hwnd )
 {
-	ifstream file(installpath + "/version.txt");
-	if (!file.is_open()) {
-		this->_updateLog->logoutUTF8(installpath + "/version.txt--open failed!");
-		return "";
-	}
 	string version;
-	stringstream buffer;
-	buffer << file.rdbuf();
-	buffer >> version;
-	file.close();
+	LPSTR winname = (LPSTR)new char[256];
+	::memset(winname, 0, 256);
+	GetWindowTextA(hwnd, winname, 256);
+	string name(winname);
+	stringstream ss;
+	ss << name;
+	ss >> version;
+	version = "";
+	ss >> version;
+	if (version[0] != 'v')return"";
+	version = version.substr(1, version.size());
 	return version;
 };
 
@@ -162,7 +159,9 @@ bool ArkUpdate::checkUpdate()
 {
 	DEBUGLOGFIN;
 	this->updateVersionFromUrl();
+	this->arkCheckWindows();
 	for (auto &i : this->_arkServerWindow) {
+		i.version = this->readVersion(i.hwnd);
 		if (i.version != this->_netVersion) {
 			DEBUGLOGFRE;
 			return true;
@@ -205,15 +204,8 @@ void ArkUpdate::arkRestart()
 				+ " " + i.map + "?listen?Port=" + i.listenPort + "?QueryPort=" + i.queryPort + "?RconPort=" + i.rconPort + "?" 
 				+ this->_arkJson->getRoot()["startCmdAdd"].asString();
 			DEBUGLOG(startCmd);
-			try
-			{
-				this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
-			}
-			catch (const std::exception& e)
-			{
-				DEBUGLOG(e.what());
-				abort();
-			}
+
+			this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "reboot" + "--" + i.name);
 			
 			DEBUGLOG("updateLog");
 			::system(startCmd.c_str());
@@ -268,7 +260,6 @@ void ArkUpdate::arkCheckWindows()
 			string windowtext = name;
 			stringstream ss;
 			ss << name;
-			string version = "";
 			string path;
 			ss >> path;
 
@@ -299,6 +290,10 @@ void ArkUpdate::arkCheckWindows()
 		delete[](a);
 		return TRUE; 
 		}, (LPARAM)(this));
+
+	for (auto& i : this->_arkServerWindow) {
+		if (i.version == "")i.version = this->readVersion(i.hwnd);
+	}
 	DEBUGLOGFRE;
 }
 

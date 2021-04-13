@@ -149,7 +149,11 @@ void AppArk::solveInput(const std::string& cmd)
 
 		}
 
-		cmdResult += this->_update.getVersion();
+
+		cmdResult += "NetVersion: " + this->_update.getVersion() + "\n";
+		for (auto& i : this->_update.getServer()) {
+			cmdResult += i.name + "--" + i.version + "\n";
+		}
 
 		COUT(cmdResult);
 		return;
@@ -529,6 +533,7 @@ void AppArk::every5min()
 void AppArk::every10min()
 {
 	RELEASELOG("checkUpdate");
+	
 	DEBUGLOG("checkUpdate");
 	if (this->_update.checkUpdate() 
 		&& this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()) {
@@ -542,8 +547,9 @@ void AppArk::every10min()
 				});
 
 			this->addWork(time(NULL) + 300, [=]() {
-				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
 				this->_rcon.shutConnect();
+				this->_update.closeAll();
+				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
 				this->_update.arkUpdate();
 				this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
 				});
