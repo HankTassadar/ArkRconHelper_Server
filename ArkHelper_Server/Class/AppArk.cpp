@@ -257,6 +257,28 @@ void AppArk::solveInput(const std::string& cmd)
 
 		}
 
+		if (cmd == "updatemod") {
+
+			COUT(this->_text["udpatemod"][0].asString());
+			string modid;
+			CIN(modid);
+
+			if (this->_modupdate->updateServerRun(modid)) {
+
+				this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
+
+			}
+			else {
+
+				COUT(this->_text["updatemod"][1].asString());
+
+			}
+
+			COUT("OK!");
+			return;
+
+		}
+
 		if (cmd == "update") {
 
 			this->_rcon.shutConnect();

@@ -50,8 +50,10 @@ bool ArkModsUpdate::checkUpdate()
 	return re;
 }
 
-bool ArkModsUpdate::updateServerRun()
+bool ArkModsUpdate::updateServerRun(std::string modid)
 {
+	if (modid!="" && ::count(this->_mods.begin(), this->_mods.end(), modid) != 1)return false;
+	
 	//write the mods which is needed update to Game.ini
 	ofstream gameinifile(this->_server.path + "/ShooterGame/Saved/Config/WindowsServer/Game.ini", std::ios::app);
 	if (!gameinifile.good()) {
@@ -61,10 +63,15 @@ bool ArkModsUpdate::updateServerRun()
 
 	gameinifile << "\n[ModInstaller]" << endl;
 	
-	for (auto& i : this->_mods) {
-		if (i.second.first != i.second.second) {
-			gameinifile << "ModIDS=" + i.first << endl;
+	if (modid == "") {
+		for (auto& i : this->_mods) {
+			if (i.second.first != i.second.second) {
+				gameinifile << "ModIDS=" + i.first << endl;
+			}
 		}
+	}
+	else {
+		gameinifile << "ModIDS=" + modid << endl;
 	}
 
 	gameinifile.close();

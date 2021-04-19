@@ -17,7 +17,7 @@ public:
 	/**
 	* run the update server
 	*/
-	bool updateServerRun();
+	bool updateServerRun(std::string modid = "");
 
 	/**
 	* connect the update server
