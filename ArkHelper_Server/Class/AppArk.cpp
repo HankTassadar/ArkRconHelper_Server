@@ -259,7 +259,7 @@ void AppArk::solveInput(const std::string& cmd)
 
 		if (cmd == "updatemod") {
 
-			COUT(this->_text["udpatemod"][0].asString());
+			COUT(this->_text["updatemod"][0].asString());
 			string modid;
 			CIN(modid);
 
