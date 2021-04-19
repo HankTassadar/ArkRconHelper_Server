@@ -30,7 +30,8 @@ private:
 	void every1min();
 	void every5min();
 	void every10min();
-	void every10min_1();
+	void checkServerUpdate();
+	void checkModsUpdate();
 	void modsServerConnect();
 
 private:
@@ -47,13 +48,12 @@ private:
 	ArkRcon _rcon;
 
 	//方舟更新
-	ArkUpdate _update;
+	ArkUpdate* _update;
 
 	//mods更新
-	ArkModsUpdate _modupdate;
+	ArkModsUpdate* _modupdate;
 
-	bool _inputModeActive;
-	bool _workModeActive;
+	bool _remoteModeActive;
 	bool _keepWindowOpen;	//保持服务器开启（崩溃自动重启）
 	bool _monitorKeep;		//监视器模式开启标志
 };

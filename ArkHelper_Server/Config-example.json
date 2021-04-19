@@ -1,9 +1,8 @@
 ﻿{
   "Mode": {
-    "InputMode": true,
-    "WorkMode": true,
-    "AutoUpdateServer": true,
-    "AutoUpdateMods": true
+    "AutoUpdateServer": false,
+    "AutoUpdateMods": false,
+    "RemoteMode": false
   },
   "IP": "127.0.0.1",
   "steamcmdPath": "E:/steamcmd/steamcmd.exe",
@@ -193,18 +192,20 @@
       "help": [
         "showonline--显示所有的在线玩家\n",
         "broadcast--向所有服务器发送公告，如果发送的内容中有中文，请确保服务器以安装UnicodeRcon插件\n",
-        "version--查询最新的服务器版本号，并显示是否需要更新\n",
         "ban--封禁一个玩家\n",
         "unban--解封一个玩家\n",
-        "shutdown--关闭所有的服务器，并关闭崩服自动重启功能\n",
-        "restartall--重启所有服务器，并开启崩服自动重启功能\n",
-        "update--更新所有服务器（无需关闭服务器，直接运行此命令即可自动关闭服务器并重启\n",
         "shopreload--重新加载所有服务器的商店配置文件，没有商店插件请不要使用此命令\n",
         "state--显示所有的服务器在线状态\n",
         "kick--从服务器中将玩家踢下线\n",
         "reconnect--重新与服务器建立连接（一般无需使用此命令，后台会自动重新连接失联的服务器）\n",
         "monitor--启动监控模式，实时监控服务器玩家在线情况，输入任何错误命令都将退出此模式，如输入asd后回车\n",
-        "exit--退出本程序，或者使用Ctrl+C也可退出本程序，尽量不要通过窗口右上角的红叉来退出\n"
+        "exit--退出本程序，或者使用Ctrl+C也可退出本程序，尽量不要通过窗口右上角的红叉来退出\n",
+        "以下命令只有再本地模式下可以使用\n",
+        "version--查询最新的服务器版本号，并显示是否需要更新,本地模式才可以使用此命令\n",
+        "shutdown--关闭所有的服务器，并关闭崩服自动重启功能,本地模式才可以使用此命令\n",
+        "restartall--重启所有服务器，并开启崩服自动重启功能,本地模式才可以使用此命令\n",
+        "update--更新所有服务器,本地模式才可以使用此命令（无需关闭服务器，直接运行此命令即可自动关闭服务器并重启）\n",
+        "modupdate--查看所有mod的最后更新时间\n"
       ],
       "showonline": [
         "是否查询玩家的游戏内角色名字，如果是输入y，否输入n，此功能需要ExtendRcon插件支持，没有此插件请输入n"
@@ -254,6 +255,7 @@
         "kick--kick player from server\n",
         "reconnect--reconnect the server which is offline\n",
         "monitor--start monitor mode,input any error cmd will exit this mode\n",
+        "modupdate--check all mods last update time\n",
         "exit--ues to exit this progrma\n"
       ],
       "showline": [

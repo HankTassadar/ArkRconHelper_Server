@@ -115,11 +115,13 @@ void ArkUpdate::updateVersionFromUrl()
 
 std::string ArkUpdate::readVersion(const HWND& hwnd )
 {
+	if (hwnd == NULL)return"";
 	string version;
 	LPSTR winname = (LPSTR)new char[256];
 	::memset(winname, 0, 256);
 	GetWindowTextA(hwnd, winname, 256);
 	string name(winname);
+	if (name == "")return "";
 	stringstream ss;
 	ss << name;
 	ss >> version;
@@ -129,6 +131,14 @@ std::string ArkUpdate::readVersion(const HWND& hwnd )
 	version = version.substr(1, version.size());
 	return version;
 };
+
+void ArkUpdate::readVersion()
+{
+	for (auto& i : this->_arkServerWindow) {
+		if (i.version != "")
+			i.version = this->readVersion(i.hwnd);
+	}
+}
 
 void ArkUpdate::shutdownAndModsUpdate(const std::vector<std::string>& modid)
 {
@@ -162,7 +172,7 @@ bool ArkUpdate::checkUpdate()
 	this->arkCheckWindows();
 	for (auto &i : this->_arkServerWindow) {
 		i.version = this->readVersion(i.hwnd);
-		if (i.version != this->_netVersion) {
+		if (i.version != "" && i.version != this->_netVersion) {
 			DEBUGLOGFRE;
 			return true;
 		}
@@ -291,9 +301,7 @@ void ArkUpdate::arkCheckWindows()
 		return TRUE; 
 		}, (LPARAM)(this));
 
-	for (auto& i : this->_arkServerWindow) {
-		if (i.version == "")i.version = this->readVersion(i.hwnd);
-	}
+	this->readVersion();
 	DEBUGLOGFRE;
 }
 

@@ -28,6 +28,12 @@ private:
 	};
 
 public:
+
+	/**
+	* read all server version from window text
+	*/
+	void readVersion();
+
 	/**
 	* shutdown the servers which mods has just been update
 	*/

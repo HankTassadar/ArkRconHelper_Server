@@ -5,8 +5,9 @@ AppArk::AppArk()
 	: CmdLineApplicationBase("# ark->", 20)
 	, _appLog(MyLog::Log::createLog("AppLog/AppLog"))
 	, _rconConfig(new JsonOperate())
-	, _inputModeActive(false)
-	, _workModeActive(false)
+	, _update(nullptr)
+	, _modupdate(nullptr)
+	, _remoteModeActive(false)
 	, _keepWindowOpen(true)
 	, _monitorKeep(false)
 {
@@ -31,6 +32,10 @@ AppArk::~AppArk()
 {
 	delete(this->_appLog);
 	delete(this->_rconConfig);
+	if (!this->_remoteModeActive) {
+		delete(this->_update);
+		delete(this->_modupdate);
+	}
 }
 
 void AppArk::solveInput(const std::string& cmd)
@@ -63,8 +68,6 @@ void AppArk::solveInput(const std::string& cmd)
 	if (cmd == "showonline") {
 
 		string cmdResult;
-
-		if (!this->_workModeActive)this->_rcon.updateplayerlist();
 
 		COUT(this->_text["showonline"][0].asString());
 		string yn = "";
@@ -132,34 +135,6 @@ void AppArk::solveInput(const std::string& cmd)
 
 	}
 
-	if (cmd == "version") {
-
-		string cmdResult;
-		bool needupdate = false;
-
-		if (!this->_workModeActive) {
-
-			needupdate = this->_update.checkUpdate();
-
-		}
-
-		if (needupdate) {
-
-			cmdResult += this->_text["version"][0].asString();
-
-		}
-
-
-		cmdResult += "NetVersion: " + this->_update.getVersion() + "\n";
-		for (auto& i : this->_update.getServer()) {
-			cmdResult += i.name + "--" + i.version + "\n";
-		}
-
-		COUT(cmdResult);
-		return;
-
-	}
-
 	if (cmd == "ban") {
 
 		COUT(this->_text["ban"][0].asString());
@@ -178,35 +153,6 @@ void AppArk::solveInput(const std::string& cmd)
 		string steamid;
 		CIN(steamid);
 		this->_rcon.sendCmdAndWiatForItRecv("unbanplayer " + steamid);
-		COUT("OK!");
-		return;
-
-	}
-
-	if (cmd == "shutdown") {
-
-		this->_keepWindowOpen = false;
-		this->_update.closeAll();
-		COUT("OK!");
-		return;
-
-	}
-
-	if (cmd == "restartall") {
-
-		this->_keepWindowOpen = true;
-		this->_update.arkRestart();
-		COUT("OK!");
-		return;
-
-	}
-
-	if (cmd == "update") {
-
-		this->_rcon.shutConnect();
-		COUT(TimeClass().TimeNow() + this->_text["update"][0].asString());
-		this->_update.arkUpdate();
-		COUT(TimeClass().TimeNow() + this->_text["update"][1].asString());
 		COUT("OK!");
 		return;
 
@@ -290,21 +236,79 @@ void AppArk::solveInput(const std::string& cmd)
 
 	}
 
-	if (cmd == "modupdate") {
 
-		auto updatetime = this->_modupdate.getUpdateTime();
-		string str;
-		sort(updatetime.begin(), updatetime.end()
-			, [&](const pair<string, time_t>& param1, const pair<string, time_t>& param2)->bool {
-				return param1.second > param2.second;
-			});
-		for (auto& i : updatetime) {
-			str += i.first + ": " + TimeClass(i.second).TimeNow() + "\n";
+
+	if (!this->_remoteModeActive) {
+
+		if (cmd == "modupdate") {
+
+			auto updatetime = this->_modupdate->getUpdateTime();
+			string str;
+			sort(updatetime.begin(), updatetime.end()
+				, [&](const pair<string, time_t>& param1, const pair<string, time_t>& param2)->bool {
+					return param1.second > param2.second;
+				});
+			for (auto& i : updatetime) {
+				str += i.first + ": " + TimeClass(i.second).TimeNow() + "\n";
+			}
+			COUT(str);
+			COUT("OK!");
+			return;
+
 		}
-		COUT(str);
-		COUT("OK!");
-		return;
 
+		if (cmd == "update") {
+
+			this->_rcon.shutConnect();
+			COUT(TimeClass().TimeNow() + this->_text["update"][0].asString());
+			this->_update->arkUpdate();
+			COUT(TimeClass().TimeNow() + this->_text["update"][1].asString());
+			COUT("OK!");
+			return;
+
+		}
+
+		if (cmd == "restartall") {
+
+			this->_keepWindowOpen = true;
+			this->_update->arkRestart();
+			COUT("OK!");
+			return;
+
+		}
+
+		if (cmd == "shutdown") {
+
+			this->_keepWindowOpen = false;
+			this->_update->closeAll();
+			COUT("OK!");
+			return;
+
+		}
+
+		if (cmd == "version") {
+
+			string cmdResult;
+			bool needupdate = false;
+
+			needupdate = this->_update->checkUpdate();
+
+			if (needupdate) {
+
+				cmdResult += this->_text["version"][0].asString();
+
+			}
+
+
+			cmdResult += "NetVersion: " + this->_update->getVersion() + "\n";
+			for (auto& i : this->_update->getServer()) {
+				cmdResult += i.name + "--" + i.version + "\n";
+			}
+
+			COUT(cmdResult);
+			return;
+
+		}
 	}
 
 	this->_monitorKeep = false;//监控模式下退出监控模式
@@ -322,9 +326,12 @@ bool AppArk::init()
 	auto root = this->_rconConfig->getRoot();
 	string language = root["Language"]["Language"].asString();
 	this->_text = root["Language"][language];
-	this->_inputModeActive = root["Mode"]["InputMode"].asBool();
-	this->_workModeActive = root["Mode"]["WorkMode"].asBool();
+	this->_remoteModeActive = root["Mode"]["RemoteMode"].asBool();
 
+	if (!this->_remoteModeActive) {
+		this->_update = new ArkUpdate();
+		this->_modupdate = new ArkModsUpdate();
+	}
 	struct server {
 		string name;
 		string ip;
@@ -334,7 +341,7 @@ bool AppArk::init()
 
 	vector<server> servers;
 	auto allservers = root["Servers"];
-
+	this->_appLog->logoutUTF8("ServerNum=" + to_string(allservers.size()));
 	for (auto& i : allservers) {
 
 		server s;
@@ -342,6 +349,7 @@ bool AppArk::init()
 		s.ip = root["IP"].asString();
 		s.port = i["RconPort"].asInt();
 		s.pass = i["AdminPass"].asString();
+		this->_appLog->logoutUTF8("Server add" + s.name + s.ip);
 		servers.push_back(s);
 
 	}
@@ -371,14 +379,18 @@ void AppArk::addWorkFunc()
 	this->addWork(time(NULL), [&]() {this->every1min(); });
 	this->addWork(time(NULL), [&]() {this->every5min(); });
 	this->addWork(time(NULL), [&]() {this->every10min(); });
-	this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
+	if (this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool() == true) {
+		this->addWork(time(NULL), [&]() {this->checkServerUpdate(); });
+	}
+
+	if (this->_rconConfig->getRoot()["Mode"]["AutoUpdateMods"].asBool() == true) {
+		this->addWork(time(NULL) + 600, [&]() {this->checkModsUpdate(); });
+	}
 }
 
 void AppArk::drawState()
 {
 	DEBUGLOGFIN;
-
-	if (this->_inputModeActive && (!this->_workModeActive))return;
 
 	if (!this->_monitorKeep)return;
 
@@ -486,18 +498,24 @@ void AppArk::every1sec()
 
 	if (this->_keepWindowOpen) {
 
-		DEBUGLOG("restartAll");
-		RELEASELOG("restartAll");
-		this->_update.arkRestart();
+		DEBUGLOG("clearRecv");
+		RELEASELOG("clearRecv");
+		this->_rcon.clearRecv();
+
+		if (!this->_remoteModeActive) {
+
+			DEBUGLOG("restartAll");
+			RELEASELOG("restartAll");
+			this->_update->arkRestart();
+
+			RELEASELOG("cheakCrashed");
+			DEBUGLOG("checkCrashed");
+			this->_update->checkCrashed();
+
+		}
 
 	}
 
-	DEBUGLOG("clearRecv");
-	RELEASELOG("clearRecv");
-	this->_rcon.clearRecv();
-	RELEASELOG("cheakCrashed");
-	DEBUGLOG("checkCrashed");
-	this->_update.checkCrashed();
 	RELEASELOG("every1sec-over");
 	this->addWork(time(NULL) + 1, [&]() {this->every1sec(); });
 }
@@ -513,9 +531,11 @@ void AppArk::every5sec()
 
 void AppArk::every10sec()
 {
-	RELEASELOG("reconnect");
-	DEBUGLOG("reconnect");
-	this->_rcon.reconnect();
+	if (this->_keepWindowOpen) {
+		RELEASELOG("reconnect");
+		DEBUGLOG("reconnect");
+		this->_rcon.reconnect();
+	}
 	RELEASELOG("every10sec-over");
 	this->addWork(time(NULL) + 10, [&]() {this->every10sec(); });
 }
@@ -532,15 +552,22 @@ void AppArk::every5min()
 
 void AppArk::every10min()
 {
+	this->addWork(time(NULL) + 600, [&]() {this->every10min(); });
+}
+
+void AppArk::checkServerUpdate()
+{
+	if (this->_remoteModeActive)return;
+
 	RELEASELOG("checkUpdate");
 	
 	DEBUGLOG("checkUpdate");
-	if (this->_update.checkUpdate() 
-		&& this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()) {
+	if (this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()
+		&& this->_update->checkUpdate()) {
 
 		for (unsigned long i = 0; i < 5; i++) {
 
-			this->addWork(time(NULL) + i * (unsigned long)60, [=]() {
+			this->addWork(time(NULL) + i * 60, [=]() {
 				auto str = this->_text["update"][2].asString() + to_string(5 - i) + this->_text["update"][3].asString();
 				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "broadcast: " + str);
 				this->_rcon.broadcast(str);
@@ -548,33 +575,35 @@ void AppArk::every10min()
 
 			this->addWork(time(NULL) + 300, [=]() {
 				this->_rcon.shutConnect();
-				this->_update.closeAll();
+				this->_update->closeAll();
 				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
-				this->_update.arkUpdate();
-				this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
+				this->_update->arkUpdate();
+				this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
 				});
 		}
 
 	}
 	else {
-		this->addWork(time(NULL) + 600, [=]() {this->every10min(); });
+		this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
 	}
 	RELEASELOG("every10min-over");
 }
 
-void AppArk::every10min_1()
+void AppArk::checkModsUpdate()
 {
+	if (this->_remoteModeActive)return;
+
 	RELEASELOG("checkModeUpdate");
 	DEBUGLOG("checkModsUpdate");
-	if (this->_modupdate.checkUpdate()
-		&&this->_rconConfig->getRoot()["Mode"]["AutoUpdateMods"].asBool()) {
+	if (this->_rconConfig->getRoot()["Mode"]["AutoUpdateMods"].asBool() 
+		&& this->_modupdate->checkUpdate()) {
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update");
-		this->_modupdate.updateServerRun();
+		this->_modupdate->updateServerRun();
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods start update over,start to connect");
 		this->addWork(time(NULL) + 60, [&]() {this->modsServerConnect(); });
 	}
 	else {
-		this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
+		this->addWork(time(NULL) + 600, [&]() {this->checkModsUpdate(); });
 	}
 	RELEASELOG("every10min_1-over");
 }
@@ -582,11 +611,11 @@ void AppArk::every10min_1()
 void AppArk::modsServerConnect()
 {
 	RELEASELOG("modsServerConnect");
-	if (this->_modupdate.connectServer()) {
+	if (this->_modupdate->connectServer()) {
 		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "--mods update finished");
-		auto modid = this->_modupdate.shutdownUpdateServer();
-		this->_update.shutdownAndModsUpdate(modid);
-		this->addWork(time(NULL) + 600, [&]() {this->every10min_1(); });
+		auto modid = this->_modupdate->shutdownUpdateServer();
+		this->_update->shutdownAndModsUpdate(modid);
+		this->addWork(time(NULL) + 600, [&]() {this->checkModsUpdate(); });
 	}
 	else {
 		this->addWork(time(NULL) + 10, [&]() {this->modsServerConnect(); });
