@@ -160,7 +160,7 @@ bool ArkModsUpdate::init()
 	auto config = new JsonOperate();
 	config->openFile("Config.json");
 	auto modsupdateserver = config->getRoot()["ModsUpdateServer"];
-	if (modsupdateserver["Mode"]["AutoUpdateMods"].asBool() == false)return true;
+
 	for (auto& i : modsupdateserver["Mods"])
 		this->_server.mods.push_back(i.asString());
 
