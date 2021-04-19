@@ -1,7 +1,7 @@
 #include"ArkModsUpdate.h"
 #include"JsonOperate.h"
 #include"CurlOperate.h"
-
+#include<algorithm>
 using namespace std;
 
 ArkModsUpdate::ArkModsUpdate()
@@ -52,7 +52,9 @@ bool ArkModsUpdate::checkUpdate()
 
 bool ArkModsUpdate::updateServerRun(std::string modid)
 {
-	if (modid!="" && ::count(this->_mods.begin(), this->_mods.end(), modid) != 1)return false;
+	if (modid != "" && 
+		count_if(this->_mods.begin(), this->_mods.end(), [=](decltype(*(this->_mods.begin())) mod)->bool {return mod.first == modid; }) != 1)
+		return false;
 	
 	//write the mods which is needed update to Game.ini
 	ofstream gameinifile(this->_server.path + "/ShooterGame/Saved/Config/WindowsServer/Game.ini", std::ios::app);
