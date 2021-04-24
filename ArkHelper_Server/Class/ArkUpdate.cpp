@@ -141,8 +141,7 @@ void ArkUpdate::clearVersion()
 void ArkUpdate::readVersion()
 {
 	for (auto& i : this->_arkServerWindow) {
-		if (i.version != "")
-			i.version = this->readVersion(i.hwnd);
+		i.version = this->readVersion(i.hwnd);
 	}
 }
 
@@ -176,8 +175,8 @@ bool ArkUpdate::checkUpdate()
 	DEBUGLOGFIN;
 	this->updateVersionFromUrl();
 	this->arkCheckWindows();
+	this->readVersion();
 	for (auto &i : this->_arkServerWindow) {
-		i.version = this->readVersion(i.hwnd);
 		if (i.version != "" && i.version != this->_netVersion) {
 			DEBUGLOGFRE;
 			return true;
@@ -307,7 +306,6 @@ void ArkUpdate::arkCheckWindows()
 		return TRUE; 
 		}, (LPARAM)(this));
 
-	this->readVersion();
 	DEBUGLOGFRE;
 }
 

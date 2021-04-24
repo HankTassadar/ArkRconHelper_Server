@@ -594,16 +594,15 @@ void AppArk::checkServerUpdate()
 				this->_rcon.broadcast(str);
 				});
 
-			this->addWork(time(NULL) + 300, [=]() {
-				this->_rcon.shutConnect();
-				this->_update->closeAll();
-				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
-				this->_update->arkUpdate();
-				this->_update->clearVersion();
-				this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
-				});
+
 		}
 
+		this->addWork(time(NULL) + 300, [=]() {
+			this->_rcon.shutConnect();
+			this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
+			this->_update->arkUpdate();
+			this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
+			});
 	}
 	else {
 		this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
