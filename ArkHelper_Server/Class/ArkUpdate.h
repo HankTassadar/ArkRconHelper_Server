@@ -28,6 +28,10 @@ private:
 	};
 
 public:
+	/**
+	* clear all versions
+	*/
+	void clearVersion();
 
 	/**
 	* read all server version from window text

@@ -132,6 +132,12 @@ std::string ArkUpdate::readVersion(const HWND& hwnd )
 	return version;
 };
 
+void ArkUpdate::clearVersion()
+{
+	for(auto &i:this->_arkServerWindow)
+		i.version = "";
+}
+
 void ArkUpdate::readVersion()
 {
 	for (auto& i : this->_arkServerWindow) {

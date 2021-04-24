@@ -584,8 +584,7 @@ void AppArk::checkServerUpdate()
 	RELEASELOG("checkUpdate");
 	
 	DEBUGLOG("checkUpdate");
-	if (this->_rconConfig->getRoot()["Mode"]["AutoUpdateServer"].asBool()
-		&& this->_update->checkUpdate()) {
+	if (this->_update->checkUpdate()) {
 
 		for (unsigned long i = 0; i < 5; i++) {
 
@@ -600,6 +599,7 @@ void AppArk::checkServerUpdate()
 				this->_update->closeAll();
 				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "start auto update");
 				this->_update->arkUpdate();
+				this->_update->clearVersion();
 				this->addWork(time(NULL) + 600, [=]() {this->checkServerUpdate(); });
 				});
 		}
