@@ -2,15 +2,18 @@
 #include"JsonOperate.h"
 #include"CurlOperate.h"
 #include<algorithm>
+#include"TimeClass.h"
 using namespace std;
 
 ArkModsUpdate::ArkModsUpdate()
+	: _log(MyLog::Log::createLog("AppLog/ModUpdateLog"))
 {
 	this->init();
 }
 
 ArkModsUpdate::~ArkModsUpdate()
 {
+	delete(this->_log);
 }
 
 bool ArkModsUpdate::checkUpdate()
@@ -42,6 +45,7 @@ bool ArkModsUpdate::checkUpdate()
 	bool re = false;
 	for (auto& i : this->_mods) {
 		if (i.second.first != i.second.second) {
+			this->_log->logoutUTF8(TimeClass().TimeNow() + i.first + "update");
 			re = true;
 			break;
 		}		
@@ -52,6 +56,7 @@ bool ArkModsUpdate::checkUpdate()
 
 bool ArkModsUpdate::updateServerRun(std::string modid)
 {
+	this->_log->logoutUTF8(TimeClass().TimeNow() + "start update server");
 	if (modid != "" && 
 		count_if(this->_mods.begin(), this->_mods.end(), [=](decltype(*(this->_mods.begin())) mod)->bool {return mod.first == modid; }) != 1)
 		return false;
@@ -59,7 +64,7 @@ bool ArkModsUpdate::updateServerRun(std::string modid)
 	//write the mods which is needed update to Game.ini
 	ofstream gameinifile(this->_server.path + "/ShooterGame/Saved/Config/WindowsServer/Game.ini", std::ios::app);
 	if (!gameinifile.good()) {
-		throw("Open Game.ini Failed!");
+		this->_log->logoutUTF8("Open Game.ini Failed!");
 		return false;
 	}
 
@@ -68,6 +73,7 @@ bool ArkModsUpdate::updateServerRun(std::string modid)
 	if (modid == "") {
 		for (auto& i : this->_mods) {
 			if (i.second.first != i.second.second) {
+				this->_log->logoutUTF8(i.first + "add in gameini");
 				gameinifile << "ModIDS=" + i.first << endl;
 			}
 		}
@@ -89,7 +95,7 @@ bool ArkModsUpdate::updateServerRun(std::string modid)
 			std::string name(a);
 			if (name.find("ShooterGameServer.exe", 0) != string::npos) {
 				if (name.find(ptr->_server.name) != string::npos) {
-					ptr->setHwnd(hwnd);
+					ptr->setHwnd(hwnd);	
 				}
 			}
 			delete[](a);
@@ -108,14 +114,30 @@ std::vector<std::string> ArkModsUpdate::shutdownUpdateServer()
 {
 	this->_connection.shutConnect();
 
+	EnumWindows([](HWND hwnd, LPARAM lParam)->BOOL {
+		auto ptr = (ArkModsUpdate*)lParam;
+		LPSTR a = (LPSTR)new char[256];
+		::memset(a, 0, 256);
+		GetWindowTextA(hwnd, a, 256);
+		std::string name(a);
+		if (name.find("ShooterGameServer.exe", 0) != string::npos) {
+			if (name.find(ptr->_server.name) != string::npos) {
+				ptr->setHwnd(hwnd);
+			}
+		}
+		delete[](a);
+		return TRUE;
+		}, (LPARAM)this);
+
 	SendNotifyMessage(this->_server.hwnd, WM_CLOSE, 0, 0);
 	while (true) {	//wait for close finish
 		LPSTR winname = (LPSTR)new char[256];
 		::memset(winname, 0, 256);
 		GetWindowTextA(this->_server.hwnd, winname, 256);
 		string name(winname);
+		this->_log->logoutUTF8(TimeClass().TimeNow() + "-close window find-" + name);
 		delete[](winname);
-		Sleep(5);
+		Sleep(20);
 		if (name == "")
 			break;
 	}
@@ -164,6 +186,12 @@ std::vector<std::pair<std::string, time_t>> ArkModsUpdate::getUpdateTime()
 	return re;
 }
 
+void ArkModsUpdate::setHwnd(HWND hwnd)
+{
+	this->_server.hwnd = hwnd;
+	this->_log->logoutUTF8(TimeClass().TimeNow() + "-mod server window find-" + to_string((int)hwnd));
+}
+
 bool ArkModsUpdate::init()
 {
 	auto config = new JsonOperate();
@@ -197,3 +225,4 @@ bool ArkModsUpdate::init()
 	delete(config);
 	return true;
 }
+

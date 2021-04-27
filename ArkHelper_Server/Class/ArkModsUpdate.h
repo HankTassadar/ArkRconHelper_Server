@@ -1,6 +1,7 @@
 #pragma once
 
 #include"ArkServer.h"
+#include"Log.h"
 #include<map>
 
 class ArkModsUpdate {
@@ -44,11 +45,10 @@ public:
 	/**
 	* set server window hwnd,do not use this function out of class
 	*/
-	void setHwnd(HWND hwnd) {
-		this->_server.hwnd = hwnd;
-	}
+	void setHwnd(HWND hwnd);
 private:
 	bool init();
+
 private:
 	struct UpdateServer {
 		HWND hwnd;
@@ -69,4 +69,6 @@ private:
 	std::map<std::string, std::pair<time_t, time_t>> _mods;
 
 	std::string _startCmd;
+
+	MyLog::Log* _log;
 };
