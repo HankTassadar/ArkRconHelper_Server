@@ -186,6 +186,28 @@ bool ArkUpdate::checkUpdate()
 	return false;
 }
 
+void ArkUpdate::forceUpdate()
+{
+	DEBUGLOG("Function in");
+	for (auto& i : this->_arkServerWindow) {
+
+		//close window
+		this->_updateLog->logoutUTF8(TimeClass::TimeClass().TimeNow() + "--" + "ShutDown" + "--" + i.name);
+		this->closeArkWindow(i.hwnd);
+
+		//make update cmd
+		string updateCmd = _arkJson->getRoot()["steamcmdPath"].asString()
+			+ " +login anonymous" + " +force_install_dir " + i.path + " +app_update 376030 validate +quit";
+
+		this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "StartUpdate" + "--" + i.path);
+		system(updateCmd.c_str());
+		this->_updateLog->logoutGBK(TimeClass::TimeClass().TimeNow() + "--" + "UpdateFinish" + "--" + i.path);
+
+
+	}
+	DEBUGLOG("Function return");
+}
+
 bool ArkUpdate::closeArkWindow(HWND hwnd)
 {
 	//close server window

@@ -50,6 +50,12 @@ public:
 	bool checkUpdate();
 
 	/**
+	*check if any server need to update
+	*return true if server need update
+	*/
+	void forceUpdate();
+
+	/**
 	* check for if any server crashed with UE4，if there is a server crashed, auto close it
 	* 查看是否有crashed窗口,如果有，则关闭该窗口使其自动重启 
 	*/

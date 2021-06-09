@@ -331,6 +331,17 @@ void AppArk::solveInput(const std::string& cmd)
 			return;
 
 		}
+
+		if (cmd == "forceupdate") {
+
+			this->_rcon.shutConnect();
+			COUT(TimeClass().TimeNow() + this->_text["update"][0].asString());
+			this->_update->forceUpdate();
+			COUT(TimeClass().TimeNow() + this->_text["update"][1].asString());
+			COUT("OK!");
+			return;
+
+		}
 	}
 
 	this->_monitorKeep = false;//监控模式下退出监控模式
