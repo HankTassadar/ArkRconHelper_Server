@@ -308,6 +308,59 @@ void AppArk::solveInput(const std::string& cmd)
 
 		}
 
+		if (cmd == "shutdownin") {
+			COUT(this->_text["shutdownin"][0].asString());
+			string min;
+			CIN(min);
+
+			stringstream ss(min);
+			int m = 0;
+			if (ss >> m) {
+				if (m >= 1 && m <= 10) {
+					time_t now = time(NULL);
+					for (int i = m - 1; i >= 0; i--) {
+						this->broadcastInTime(this->_text["shutdownin"][2].asString() + to_string(m - i) + this->_text["shutdownin"][3].asString(), i);
+					}
+					this->addWork(time(NULL) + m * 60, [=]() {
+						this->_keepWindowOpen = false;
+						this->_update->closeAll();
+						});
+				}
+				else {
+					COUT(this->_text["shutdownin"][1].asString());
+				}
+			}
+			else {
+				COUT(this->_text["shutdownin"][1].asString());
+			}
+		}
+
+		if (cmd == "rebootin") {
+			COUT(this->_text["rebootin"][0].asString());
+			string min;
+			CIN(min);
+
+			stringstream ss(min);
+			int m = 0;
+			if (ss >> m) {
+				if (m >= 1 && m <= 10) {
+					time_t now = time(NULL);
+					for (int i = m - 1; i >= 0; i--) {
+						this->broadcastInTime(this->_text["rebootin"][2].asString() + to_string(m - i) + this->_text["rebootin"][3].asString(), i);
+					}
+					this->addWork(time(NULL) + m * 60, [=]() {
+						this->_update->closeAll();
+						});
+				}
+				else {
+					COUT(this->_text["rebootin"][1].asString());
+				}
+			}
+			else {
+				COUT(this->_text["rebootin"][1].asString());
+			}
+		}
+
 		if (cmd == "version") {
 
 			string cmdResult;
@@ -335,9 +388,9 @@ void AppArk::solveInput(const std::string& cmd)
 		if (cmd == "forceupdate") {
 
 			this->_rcon.shutConnect();
-			COUT(TimeClass().TimeNow() + this->_text["update"][0].asString());
+			COUT(TimeClass().TimeNow() + this->_text["forceupdate"][0].asString());
 			this->_update->forceUpdate();
-			COUT(TimeClass().TimeNow() + this->_text["update"][1].asString());
+			COUT(TimeClass().TimeNow() + this->_text["forceupdate"][1].asString());
 			COUT("OK!");
 			return;
 
@@ -598,14 +651,7 @@ void AppArk::checkServerUpdate()
 	if (this->_update->checkUpdate()) {
 
 		for (unsigned long i = 0; i < 5; i++) {
-
-			this->addWork(time(NULL) + i * 60, [=]() {
-				auto str = this->_text["update"][2].asString() + to_string(5 - i) + this->_text["update"][3].asString();
-				this->_appLog->logoutUTF8(TimeClass().TimeNow() + "broadcast: " + str);
-				this->_rcon.broadcast(str);
-				});
-
-
+			this->broadcastInTime(this->_text["update"][2].asString() + to_string(5 - i) + this->_text["update"][3].asString(), i);
 		}
 
 		this->addWork(time(NULL) + 300, [=]() {
@@ -653,4 +699,12 @@ void AppArk::modsServerConnect()
 		this->addWork(time(NULL) + 10, [&]() {this->modsServerConnect(); });
 	}
 	RELEASELOG("modsServerConnect-over");
+}
+
+void AppArk::broadcastInTime(std::string msg, int t)
+{
+	this->addWork(time(NULL) + 60 * t, [=]() {
+		this->_appLog->logoutUTF8(TimeClass().TimeNow() + "broadcast: " + msg);
+		this->_rcon.broadcast(msg);
+		});
 }

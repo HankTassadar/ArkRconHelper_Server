@@ -34,6 +34,10 @@ private:
 	void checkModsUpdate();
 	void modsServerConnect();
 
+	/*
+	* 一定时间后发送公告，time为分钟
+	*/
+	void broadcastInTime(std::string msg, int time);
 private:
 	//日志
 	MyLog::Log* _appLog;
