@@ -333,6 +333,8 @@ void AppArk::solveInput(const std::string& cmd)
 			else {
 				COUT(this->_text["shutdownin"][1].asString());
 			}
+
+			return;
 		}
 
 		if (cmd == "rebootin") {
@@ -359,6 +361,8 @@ void AppArk::solveInput(const std::string& cmd)
 			else {
 				COUT(this->_text["rebootin"][1].asString());
 			}
+
+			return;
 		}
 
 		if (cmd == "version") {
